@@ -1,10 +1,9 @@
-package com.silcare.css.Component
+package com.silcare.css.Component.top_app_bar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,11 +35,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.silcare.css.R
+import coil.compose.AsyncImage
 
 @Composable
 fun TopSearchBar(
     value: String,
     onValueChange: (String) -> Unit,
+    imgUrl: String,
+    onClick: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val focusManager = LocalFocusManager.current
@@ -67,7 +67,7 @@ fun TopSearchBar(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Search...",
+                    text = "Cari...",
                     color = colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             },
@@ -97,6 +97,7 @@ fun TopSearchBar(
             ),
             trailingIcon = {
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     content = {
                         IconButton(
                             onClick = {
@@ -106,24 +107,26 @@ fun TopSearchBar(
                                 Icon(
                                     painter = painterResource(id = R.drawable.iconsearch),
                                     contentDescription = null,
-                                    modifier = Modifier.size(15.dp),
+                                    modifier = Modifier.size(20.dp),
                                     tint = Color(0xffb889ff)
                                 )
                             }
                         )
-                        IconButton(
-                            onClick = {
-                                focusManager.clearFocus()
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.filter),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(15.dp),
-                                    tint = Color(0xffb889ff)
-                                )
-                            }
-                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .size(35.dp)
+                                .clip(CircleShape)
+                                .background(colorScheme.onSurface.copy(alpha = 0.2f))
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable { onClick() },
+                                contentDescription = null,
+                                model = imgUrl
+                            )
+                        }
                     }
                 )
             }
@@ -139,7 +142,7 @@ private fun TopSearchBarPrev() {
     Box(
         modifier = Modifier.fillMaxSize(),
         content = {
-            TopSearchBar(value = value, onValueChange = { value = it })
+            TopSearchBar(value = value, onValueChange = { value = it }, imgUrl = "", onClick = {})
         }
     )
 }
