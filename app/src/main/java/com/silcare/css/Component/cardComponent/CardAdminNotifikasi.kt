@@ -1,4 +1,4 @@
-package com.silcare.css.Component.adminNotifikasi
+package com.silcare.css.Component.cardComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,17 +27,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.silcare.css.R
+import com.silcare.css.api.AdminNotifikasi
 
 @Composable
 fun CardAdminNotifikasi(
-    nama: String,
-    namaAlmarhum: String,
-    status: Boolean,
-    inputData: Boolean,
-    fotoKtpPerwakilan: Boolean,
-    fotoKtp: Boolean,
-    fotoKk: Boolean,
-    suratKematian: Boolean,
+    data: AdminNotifikasi,
     onClickKonfirmasi: () -> Unit,
     onClickBatal: () -> Unit,
     onClickDitail: () -> Unit
@@ -46,14 +40,19 @@ fun CardAdminNotifikasi(
         modifier = Modifier.background(Color(0xFFFEF7FF)),
         content = {
             Column(
-                modifier = Modifier.padding(10.dp),
+                modifier = Modifier.padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = 10.dp,
+                    top = 10.dp
+                ),
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Text(
-                                text = nama,
+                                text = data.nama,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFF38008B)
@@ -78,11 +77,10 @@ fun CardAdminNotifikasi(
                                     )
                                     Spacer(modifier = Modifier.size(5.dp))
                                     Text(
-                                        text = namaAlmarhum,
+                                        text = data.namaAlmarhum,
                                     )
                                 }
                             )
-                            Text(text = if (status) "Di Terima" else "Di Tolak")
                         }
                     )
                     Spacer(modifier = Modifier.size(10.dp))
@@ -104,12 +102,14 @@ fun CardAdminNotifikasi(
                                                     )
                                                     Spacer(modifier = Modifier.size(10.dp))
                                                     Icon(
-                                                        modifier = Modifier.size(if (inputData) 20.dp else 10.dp),
-                                                        painter = if (inputData) painterResource(R.drawable.sudah) else painterResource(
+                                                        modifier = Modifier.size(if (data.inputData) 20.dp else 10.dp),
+                                                        painter = if (data.inputData) painterResource(
+                                                            R.drawable.sudah
+                                                        ) else painterResource(
                                                             R.drawable.belum
                                                         ),
                                                         contentDescription = null,
-                                                        tint = if (inputData) Color(0xFF35A700) else Color(
+                                                        tint = if (data.inputData) Color(0xFF35A700) else Color(
                                                             0xFFCC0000
                                                         )
                                                     )
@@ -126,12 +126,12 @@ fun CardAdminNotifikasi(
                                                     )
                                                     Spacer(modifier = Modifier.size(10.dp))
                                                     Icon(
-                                                        modifier = Modifier.size(if (fotoKtpPerwakilan) 20.dp else 10.dp),
-                                                        painter = if (fotoKtpPerwakilan) painterResource(
+                                                        modifier = Modifier.size(if (data.fotoKtpPerwakilan) 20.dp else 10.dp),
+                                                        painter = if (data.fotoKtpPerwakilan) painterResource(
                                                             R.drawable.sudah
                                                         ) else painterResource(R.drawable.belum),
                                                         contentDescription = null,
-                                                        tint = if (fotoKtpPerwakilan) Color(
+                                                        tint = if (data.fotoKtpPerwakilan) Color(
                                                             0xFF35A700
                                                         ) else Color(0xFFCC0000)
                                                     )
@@ -152,12 +152,14 @@ fun CardAdminNotifikasi(
                                                     )
                                                     Spacer(modifier = Modifier.size(10.dp))
                                                     Icon(
-                                                        modifier = Modifier.size(if (fotoKtp) 20.dp else 10.dp),
-                                                        painter = if (fotoKtp) painterResource(R.drawable.sudah) else painterResource(
+                                                        modifier = Modifier.size(if (data.fotoKtp) 20.dp else 10.dp),
+                                                        painter = if (data.fotoKtp) painterResource(
+                                                            R.drawable.sudah
+                                                        ) else painterResource(
                                                             R.drawable.belum
                                                         ),
                                                         contentDescription = null,
-                                                        tint = if (fotoKtp) Color(0xFF35A700) else Color(
+                                                        tint = if (data.fotoKtp) Color(0xFF35A700) else Color(
                                                             0xFFCC0000
                                                         )
                                                     )
@@ -174,12 +176,12 @@ fun CardAdminNotifikasi(
                                                     )
                                                     Spacer(modifier = Modifier.size(10.dp))
                                                     Icon(
-                                                        modifier = Modifier.size(if (fotoKk) 20.dp else 10.dp),
-                                                        painter = if (fotoKk) painterResource(R.drawable.sudah) else painterResource(
+                                                        modifier = Modifier.size(if (data.fotoKk) 20.dp else 10.dp),
+                                                        painter = if (data.fotoKk) painterResource(R.drawable.sudah) else painterResource(
                                                             R.drawable.belum
                                                         ),
                                                         contentDescription = null,
-                                                        tint = if (fotoKk) Color(0xFF35A700) else Color(
+                                                        tint = if (data.fotoKk) Color(0xFF35A700) else Color(
                                                             0xFFCC0000
                                                         )
                                                     )
@@ -197,12 +199,12 @@ fun CardAdminNotifikasi(
                                             )
                                             Spacer(modifier = Modifier.size(10.dp))
                                             Icon(
-                                                modifier = Modifier.size(if (suratKematian) 20.dp else 10.dp),
-                                                painter = if (suratKematian) painterResource(R.drawable.sudah) else painterResource(
+                                                modifier = Modifier.size(if (data.suratKematian) 20.dp else 10.dp),
+                                                painter = if (data.suratKematian) painterResource(R.drawable.sudah) else painterResource(
                                                     R.drawable.belum
                                                 ),
                                                 contentDescription = null,
-                                                tint = if (suratKematian) Color(0xFF35A700) else Color(
+                                                tint = if (data.suratKematian) Color(0xFF35A700) else Color(
                                                     0xFFCC0000
                                                 )
                                             )
@@ -212,34 +214,43 @@ fun CardAdminNotifikasi(
                             )
                             Column(
                                 content = {
-                                    Box(
-                                        modifier = Modifier
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color(0xFFCC0000),
-                                                shape = RoundedCornerShape(5.dp)
-                                            )
-                                            .width(100.dp)
-                                            .height(30.dp)
-                                            .clickable { onClickBatal() },
-                                        contentAlignment = Alignment.Center,
-                                        content = {
-                                            Text(text = "Batal", color = Color(0xFFCC0000))
-                                        }
-                                    )
-                                    Spacer(modifier = Modifier.size(5.dp))
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(5.dp))
-                                            .background(Color(0xFF35A700))
-                                            .width(100.dp)
-                                            .height(30.dp)
-                                            .clickable { onClickKonfirmasi() },
-                                        contentAlignment = Alignment.Center,
-                                        content = {
-                                            Text(text = "Konfirmasi", color = Color.White)
-                                        }
-                                    )
+                                    if (data.statusNotifikasi) {
+                                        Text(
+                                            modifier = Modifier.padding(end = 20.dp),
+                                            text = if (data.status) "Di Terima"  else "Di Tolak",
+                                            color = if (data.status) Color(0xFF35A700) else Color(0xFFCC0000),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    } else {
+                                        Box(
+                                            modifier = Modifier
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = Color(0xFFCC0000),
+                                                    shape = RoundedCornerShape(5.dp)
+                                                )
+                                                .width(100.dp)
+                                                .height(30.dp)
+                                                .clickable { onClickBatal() },
+                                            contentAlignment = Alignment.Center,
+                                            content = {
+                                                Text(text = "Batal", color = Color(0xFFCC0000))
+                                            }
+                                        )
+                                        Spacer(modifier = Modifier.size(5.dp))
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(5.dp))
+                                                .background(Color(0xFF35A700))
+                                                .width(100.dp)
+                                                .height(30.dp)
+                                                .clickable { onClickKonfirmasi() },
+                                            contentAlignment = Alignment.Center,
+                                            content = {
+                                                Text(text = "Konfirmasi", color = Color.White)
+                                            }
+                                        )
+                                    }
                                 }
                             )
                         }
@@ -254,16 +265,9 @@ fun CardAdminNotifikasi(
 @Composable
 private fun CardAdminNotifikasiPrev() {
     CardAdminNotifikasi(
-        nama = "Tedy Alvaro Siagian",
-        namaAlmarhum = "MS Alamsyah chatib",
-        inputData = true,
-        fotoKtpPerwakilan = false,
-        suratKematian = false,
-        fotoKk = true,
-        fotoKtp = true,
+        data = AdminNotifikasi(statusNotifikasi = true),
         onClickKonfirmasi = {},
         onClickBatal = {},
         onClickDitail = {},
-         status = true
     )
 }
