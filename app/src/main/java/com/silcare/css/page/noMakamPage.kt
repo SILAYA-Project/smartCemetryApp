@@ -1,6 +1,7 @@
 package com.silcare.css.page
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,7 @@ import com.silcare.css.R
 import com.silcare.css.api.noBlok
 
 @Composable
-fun NoMakamPage() {
+fun NoMakamPage(onBack : () -> Unit) {
     Column (
         modifier = Modifier.background(Color.White).padding(start = 20.dp, end = 20.dp),
         content = {
@@ -32,7 +33,7 @@ fun NoMakamPage() {
                 verticalAlignment = Alignment.CenterVertically,
                 content = {
                     Icon(
-                        modifier = Modifier.padding(end = 15.dp).size(20.dp),
+                        modifier = Modifier.clickable { onBack() }.padding(end = 15.dp).size(20.dp),
                         painter = painterResource(R.drawable.iconback),
                         contentDescription = null,
                         tint = Color(0xFF38008B)
@@ -64,5 +65,5 @@ fun NoMakamPage() {
 @Preview(showBackground = true)
 @Composable
 private fun NoMakamPagePrev() {
-    NoMakamPage()
+    NoMakamPage(onBack = {})
 }

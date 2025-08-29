@@ -21,10 +21,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.silcare.css.R
 
 @Composable
-fun BottomBarMain() {
+fun BottomBarMain(navController: NavController) {
     var selectedIndex by remember { mutableStateOf(0) }
     Box(
         modifier = Modifier
@@ -46,7 +48,10 @@ fun BottomBarMain() {
                 tint = Color(0xFF38008B),
                 modifier = Modifier
                     .size(25.dp)
-                    .clickable { selectedIndex = 0 }
+                    .clickable {
+                        selectedIndex = 0
+                        navController.navigate("Home")
+                    }
             )
 
             Icon(
@@ -56,7 +61,10 @@ fun BottomBarMain() {
                 tint = Color(0xFF38008B),
                 modifier = Modifier
                     .size(25.dp)
-                    .clickable { selectedIndex = 1 }
+                    .clickable {
+                        selectedIndex = 1
+                        navController.navigate("Database")
+                    }
             )
 
             Icon(
@@ -66,7 +74,10 @@ fun BottomBarMain() {
                 tint = Color(0xFF38008B),
                 modifier = Modifier
                     .size(25.dp)
-                    .clickable { selectedIndex = 2 }
+                    .clickable {
+                        selectedIndex = 2
+                        navController.navigate("Notifikasi")
+                    }
             )
 
             Icon(
@@ -77,7 +88,10 @@ fun BottomBarMain() {
                 tint = Color(0xFF38008B),
                 modifier = Modifier
                     .size(25.dp)
-                    .clickable { selectedIndex = 3 }
+                    .clickable {
+                        selectedIndex = 3
+                        navController.navigate("Akun")
+                    }
             )
         }
     }
@@ -86,5 +100,5 @@ fun BottomBarMain() {
 @Preview
 @Composable
 private fun BottomBarMainPrev() {
-    BottomBarMain()
+    BottomBarMain(navController = rememberNavController())
 }

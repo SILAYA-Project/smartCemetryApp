@@ -30,6 +30,7 @@ import com.silcare.css.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldCustom(
+    modifier: Modifier = Modifier,
     value: String,
     title: String,
     placeholder: String = "",
@@ -45,13 +46,12 @@ fun TextFieldCustom(
         contentAlignment = Alignment.CenterStart
     ) {
         TextField(
-            modifier = Modifier
+            modifier = modifier
                 .border(
                     width = 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(5.dp)
-                )
-                .fillMaxWidth(),
+                ).fillMaxWidth(),
             isError = isError,
             value = value,
             onValueChange = { onValueChange(it) },
