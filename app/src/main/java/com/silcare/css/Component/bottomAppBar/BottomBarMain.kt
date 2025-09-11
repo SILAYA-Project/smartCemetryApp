@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -30,6 +31,7 @@ fun BottomBarMain(navController: NavController) {
     var selectedIndex by remember { mutableStateOf(0) }
     Box(
         modifier = Modifier
+            .navigationBarsPadding()
             .fillMaxWidth()
             .background(Color.White)
             .padding(8.dp)
@@ -50,7 +52,7 @@ fun BottomBarMain(navController: NavController) {
                     .size(25.dp)
                     .clickable {
                         selectedIndex = 0
-                        navController.navigate("Home")
+                        navController.navigate("home")
                     }
             )
 
@@ -63,7 +65,7 @@ fun BottomBarMain(navController: NavController) {
                     .size(25.dp)
                     .clickable {
                         selectedIndex = 1
-                        navController.navigate("Database")
+                        navController.navigate("database")
                     }
             )
 
@@ -76,23 +78,23 @@ fun BottomBarMain(navController: NavController) {
                     .size(25.dp)
                     .clickable {
                         selectedIndex = 2
-                        navController.navigate("Notifikasi")
+                        navController.navigate("notifikasi")
                     }
             )
 
-            Icon(
-                painter = if (selectedIndex == 3) painterResource(R.drawable.iconakunfill) else painterResource(
-                    R.drawable.iconakun
-                ),
-                contentDescription = "Akun",
-                tint = Color(0xFF38008B),
-                modifier = Modifier
-                    .size(25.dp)
-                    .clickable {
-                        selectedIndex = 3
-                        navController.navigate("Akun")
-                    }
-            )
+//            Icon(
+//                painter = if (selectedIndex == 3) painterResource(R.drawable.iconakunfill) else painterResource(
+//                    R.drawable.iconakun
+//                ),
+//                contentDescription = "Akun",
+//                tint = Color(0xFF38008B),
+//                modifier = Modifier
+//                    .size(25.dp)
+//                    .clickable {
+//                        selectedIndex = 3
+//                        navController.navigate("Akun")
+//                    }
+//            )
         }
     }
 }

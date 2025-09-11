@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "224674162959",
+    "project_id": "silaya-6e975",
+    "storage_bucket": "silaya-6e975.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224674162959:android:2cdf3bebe4f41cbea6f67a",
+        "android_client_info": {
+          "package_name": "com.silcare.css"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBucF2sp5-IEdWDQ7WqDxD4BJEkyELr55o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

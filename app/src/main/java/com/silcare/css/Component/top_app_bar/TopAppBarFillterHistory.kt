@@ -31,12 +31,12 @@ fun TopAppBarFillterHistory(onFillter : () -> Unit,onHistory : () -> Unit) {
                 tint = Color(0xFF38008B)
             )
             Spacer(modifier = Modifier.size(20.dp))
-            Icon(
-                modifier = Modifier.size(25.dp).clickable { onHistory() },
-                painter = painterResource(R.drawable.iconhistory),
-                contentDescription = null,
-                tint = Color(0xFF38008B)
-            )
+//            Icon(
+//                modifier = Modifier.size(25.dp).clickable { onHistory() },
+//                painter = painterResource(R.drawable.iconhistory),
+//                contentDescription = null,
+//                tint = Color(0xFF38008B)
+//            )
             Spacer(modifier = Modifier.size(20.dp))
         }
     )

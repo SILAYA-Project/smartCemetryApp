@@ -27,10 +27,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.silcare.css.R
-import com.silcare.css.api.noBlok
+import com.silcare.css.api.IdMakam
 
 @Composable
-fun CardNoMayat(data: noBlok, onClik: () -> Unit) {
+fun CardNoMayat(data: IdMakam, onClik: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,15 +55,15 @@ fun CardNoMayat(data: noBlok, onClik: () -> Unit) {
                         content = {
                             Row {
                                 Text(
-                                    text = "${data.no} - ${data.namaMakam}",
+                                    text = "${data.code_makam} - ${data.nama_blok}",
                                     color = Color(0xFF38008B),
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                             Spacer(modifier = Modifier.height(5.dp))
-                            if (!data.status) {
-                                Text(text = data.namaAlm, fontSize = 15.sp, color = Color(0xFF38008B))
+                            if (data.status) {
+                                Text(text = data.namaAlmarhum, fontSize = 15.sp, color = Color(0xFF38008B))
                             } else {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -105,5 +105,5 @@ fun CardNoMayat(data: noBlok, onClik: () -> Unit) {
 @Preview
 @Composable
 private fun CardNoMayatPrev() {
-    CardNoMayat(data = noBlok(status = true), onClik = {})
+    CardNoMayat(data = IdMakam(status = true), onClik = {})
 }

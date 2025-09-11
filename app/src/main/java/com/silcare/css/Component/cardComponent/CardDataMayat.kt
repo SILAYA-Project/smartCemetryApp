@@ -46,13 +46,13 @@ fun CardDataMayat(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Text(
-                                text = data.namaAlm,
+                                text = data.nama_mayat,
                                 fontSize = 15.sp,
                                 color = Color(0xFF38008B),
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = data.jenisKelamin,
+                                text = data.jenis_kelamin,
                                 fontSize = 13.sp,
                             )
                         }
@@ -63,11 +63,11 @@ fun CardDataMayat(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Text(
-                                text = data.waktuMeninggal,
+                                text = data.tanggal_di_makamkan,
                                 fontSize = 13.sp,
                             )
                             Text(
-                                text = data.umur,
+                                text = "${data.usia} Tahun",
                                 fontSize = 13.sp,
                             )
                         }
@@ -84,7 +84,7 @@ fun CardDataMayat(
                                         color = Color(0xFF7C7C7C),
                                         fontSize = 13.sp
                                     )
-                                    Text(text = data.blokMakam, fontSize = 13.sp)
+                                    Text(text = data.blok_makam, fontSize = 13.sp)
                                 }
                                 Row {
                                     Text(
@@ -93,7 +93,8 @@ fun CardDataMayat(
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = if (data.idMakam != 0) data.idMakam.toString() else "-----",
+//                                        text = if (data.idMakam != 0) data.idMakam.toString() else "-----",
+                                        text = data.id_makam,
                                         fontSize = 13.sp
                                     )
                                 }
@@ -110,7 +111,7 @@ fun CardDataMayat(
                                         color = Color(0xFF7C7C7C),
                                         fontSize = 13.sp
                                     )
-                                    Text(text = data.meninggalDi, fontSize = 13.sp)
+                                    Text(text = data.meninggal_di, fontSize = 13.sp)
                                 }
                                 Row {
                                     Text(
@@ -141,7 +142,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = data.tempatTanggalLahir, fontSize = 13.sp)
+                            Text(text = data.tempat_dan_tanggal_lahir, fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -159,9 +160,9 @@ fun CardDataMayat(
                             Text(
                                 text = "Di Wakilkan Oleh    ",
                                 color = Color(0xFF7C7C7C),
-                                fontSize = 13.sp
+                                fontSize = 13.sp,
                             )
-                            Text(text = data.perwakilan, fontSize = 13.sp)
+                            Text(text = data.di_wakilkan_oleh, fontSize = 13.sp,fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -170,7 +171,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = if (data.kk != 0) data.kk.toString() else "-----", fontSize = 13.sp)
+                            Text(text = if (data.nomor_nik != 0) data.nomor_nik.toString() else "-----", fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -179,7 +180,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = if (data.kk != 0) data.kk.toString() else "-----", fontSize = 13.sp)
+                            Text(text = if (data.nomor_kk != 0) data.nomor_kk.toString() else "-----", fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -197,7 +198,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = data.noHp, fontSize = 13.sp)
+                            Text(text = data.nomor_telpon, fontSize = 13.sp)
                         }
                     }
                 }
@@ -211,10 +212,10 @@ fun CardDataMayat(
 private fun CardDataMayatPrev() {
     CardDataMayat(
         data = Mayat(
-            namaAlm = "MS ALAMSYAH CHATIB BASA",
-            umur = "${56} Tahun",
-            waktuMeninggal = "Rabu, 01/01/2003, 17:00",
-            jenisKelamin = "Laki-Laki"
+            nama_mayat = "MS ALAMSYAH CHATIB BASA",
+            usia = 65,
+            tanggal_di_makamkan = "Rabu, 01/01/2003, 17:00",
+            jenis_kelamin = "Laki-Laki"
         )
     )
 }

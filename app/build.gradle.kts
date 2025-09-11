@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    id("com.google.gms.google-services") version "4.4.2"
 }
 
 android {
@@ -54,6 +56,20 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.2")
+    // datePicker
+    implementation ("io.github.vanpra.compose-material-dialogs:core:0.9.0")
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // lorem piscum
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -63,6 +79,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

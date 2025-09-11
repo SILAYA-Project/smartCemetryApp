@@ -37,7 +37,7 @@ fun CardAdminNotifikasi(
     onClickDitail: () -> Unit
 ) {
     Box(
-        modifier = Modifier.background(Color(0xFFFEF7FF)),
+        modifier = Modifier.background(if(!data.statusNotifikasi) Color(0xFFFEF7FF) else Color.White),
         content = {
             Column(
                 modifier = Modifier.padding(
@@ -52,7 +52,7 @@ fun CardAdminNotifikasi(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Text(
-                                text = data.nama,
+                                text = data.di_wakilkan_oleh,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFF38008B)
@@ -77,7 +77,7 @@ fun CardAdminNotifikasi(
                                     )
                                     Spacer(modifier = Modifier.size(5.dp))
                                     Text(
-                                        text = data.namaAlmarhum,
+                                        text = data.nama_mayat,
                                     )
                                 }
                             )

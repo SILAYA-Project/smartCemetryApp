@@ -1,9 +1,8 @@
-package com.silcare.css.page
+package com.silcare.css.page.pageAjuan
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,11 +30,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.silcare.css.Component.textFieldCustom.TextFieldCustom
 import com.silcare.css.Component.textFieldCustom.TextFieldDropDown
+import com.silcare.css.api.AdminNotifikasi
+import com.silcare.css.api.AjuanDataStore
 
 @Composable
-fun Ajuan1Page() {
+fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
+    var di_wakilkan_oleh by remember { mutableStateOf(data.di_wakilkan_oleh) }
+    var nomor_telpon by remember { mutableStateOf(data.nomor_telpon) }
+    var alamat by remember { mutableStateOf(data.alamatw) }
+    var nomor_nik by remember { mutableStateOf(data.nomor_nik) }
+    var rt by remember { mutableStateOf(data.rtw) }
+    var rw by remember { mutableStateOf(data.rww) }
+    var kelurahan by remember { mutableStateOf(data.kelurahanw) }
+    var kecamatan by remember { mutableStateOf(data.kecamatanw) }
+    var hubungan by remember { mutableStateOf(data.hubungan) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,8 +65,10 @@ fun Ajuan1Page() {
             )
             Spacer(modifier = Modifier.padding(20.dp))
             TextFieldCustom(
-                value = "",
-                onValueChange = {},
+                value = di_wakilkan_oleh,
+                onValueChange = {
+                    di_wakilkan_oleh = it
+                },
                 title = "Nama",
                 placeholder = "Masukan Nama Anda",
                 trailingIcon = {},
@@ -58,8 +76,10 @@ fun Ajuan1Page() {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
-                value = "",
-                onValueChange = {},
+                value = nomor_telpon,
+                onValueChange = {
+                    nomor_telpon = it
+                },
                 title = "Nomor Hp",
                 placeholder = "0813-----------------",
                 trailingIcon = {},
@@ -67,8 +87,10 @@ fun Ajuan1Page() {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
-                value = "",
-                onValueChange = {},
+                value = nomor_nik.toString(),
+                onValueChange = {
+                    nomor_nik = it.toInt()
+                },
                 title = "Nomor Idetitas / KTP",
                 placeholder = "092739------",
                 trailingIcon = {},
@@ -76,8 +98,10 @@ fun Ajuan1Page() {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
-                value = "",
-                onValueChange = {},
+                value = alamat,
+                onValueChange = {
+                    alamat = it
+                },
                 title = "Alamat",
                 placeholder = "Alamat Anda",
                 trailingIcon = {},
@@ -88,8 +112,10 @@ fun Ajuan1Page() {
                 content = {
                     TextFieldCustom(
                         modifier = Modifier.width(170.dp),
-                        value = "",
-                        onValueChange = {},
+                        value = rt,
+                        onValueChange = {
+                            rt = it
+                        },
                         title = "RT",
                         placeholder = "00",
                         trailingIcon = {},
@@ -98,8 +124,10 @@ fun Ajuan1Page() {
                     Spacer(modifier = Modifier.size(10.dp))
                     TextFieldCustom(
                         modifier = Modifier.width(170.dp),
-                        value = "",
-                        onValueChange = {},
+                        value = rw,
+                        onValueChange = {
+                            rw = it
+                        },
                         title = "RW",
                         placeholder = "00",
                         trailingIcon = {},
@@ -107,14 +135,33 @@ fun Ajuan1Page() {
                     )
                 }
             )
+
             Spacer(modifier = Modifier.size(20.dp))
-            TextFieldDropDown(title = "Kelurahan")
+            TextFieldDropDown(
+                title = "Kelurahan",
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = {
+                    kelurahan = it
+                },
+                value = kelurahan,
+                pilihan = listOf("Kelurahan 1", "Kelurahan 2", "Kelurahan 3")
+            )
             Spacer(modifier = Modifier.size(20.dp))
-            TextFieldDropDown(title = "Kecamatan")
-            Spacer(modifier = Modifier.padding(20.dp))
+            TextFieldDropDown(
+                title = "Kecamatan",
+                modifier = Modifier.fillMaxWidth(),
+                value = kecamatan,
+                onValueChange = {
+                    kecamatan = it
+                },
+                pilihan = listOf("Kecamatan 1", "Kecamatan 2", "Kecamatan 3")
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
-                value = "",
-                onValueChange = {},
+                value = hubungan,
+                onValueChange = {
+                    hubungan = it
+                },
                 title = "Hubungan",
                 placeholder = "hubungan anda Dengan alm",
                 trailingIcon = {},
@@ -133,7 +180,9 @@ fun Ajuan1Page() {
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp)
-                            .clickable { },
+                            .clickable {
+                                navController.popBackStack()
+                            },
                         content = {
                             Text(text = "Batal", color = Color(0xFF38008B), fontSize = 13.sp)
                         }
@@ -144,7 +193,22 @@ fun Ajuan1Page() {
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color(0xFF38008B))
                             .padding(start = 30.dp, end = 30.dp, top = 15.dp, bottom = 15.dp)
-                            .clickable { },
+                            .clickable {
+                                val newData = AdminNotifikasi(
+                                    di_wakilkan_oleh = di_wakilkan_oleh,
+                                    nomor_telpon = nomor_telpon,
+                                    alamatw = alamat,
+                                    nomor_nik = nomor_nik,
+                                    rtw = rt,
+                                    rww = rw,
+                                    kelurahanw = kelurahan,
+                                    kecamatanw = kecamatan,
+                                    hubungan = hubungan
+                                )
+
+                                AjuanDataStore.addData(newData)
+                                navController.navigate("ajuan2")
+                            },
                         content = {
                             Text(text = "Selanjutnya", color = Color.White, fontSize = 13.sp)
                         }
@@ -158,5 +222,5 @@ fun Ajuan1Page() {
 @Preview
 @Composable
 private fun Ajuan1PagePrev() {
-    Ajuan1Page()
+    Ajuan1Page(rememberNavController(), data = AdminNotifikasi())
 }

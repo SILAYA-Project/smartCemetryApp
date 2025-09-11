@@ -2,6 +2,7 @@ package com.silcare.css.Component.cardComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,9 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.silcare.css.R
 
 @Composable
-fun CardMakam(namaMakam: String, terisi: Int, max: Int) {
+fun CardMakam(namaMakam: String, terisi: Int, max: Int,onClick: () -> Unit) {
     Card(
         modifier = Modifier
+            .clickable { onClick() }
             .fillMaxWidth()
             .height(80.dp)
             .border(
@@ -52,9 +54,9 @@ fun CardMakam(namaMakam: String, terisi: Int, max: Int) {
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.Center,
                         content = {
-                            Text(text = namaMakam, color = Color(0xFF38008B), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text(text = namaMakam, color = Color(0xFF38008B), fontSize = 17.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(5.dp))
-                            Text(text = "$terisi / $max", fontSize = 15.sp)
+                            Text(text = "$terisi / $max", fontSize = 13.sp)
                         }
                     )
                     Box(
@@ -65,7 +67,7 @@ fun CardMakam(namaMakam: String, terisi: Int, max: Int) {
                         contentAlignment = Alignment.Center,
                         content = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
+                                modifier = Modifier.size(15.dp),
                                 painter = painterResource(R.drawable.petaicon),
                                 contentDescription = null,
                                 tint = Color(0xFF38008B)
@@ -84,6 +86,7 @@ private fun CardMakamPrev() {
     CardMakam(
         namaMakam = "Mawar",
         terisi = 34,
-        max = 105
+        max = 105,
+        onClick = {}
     )
 }

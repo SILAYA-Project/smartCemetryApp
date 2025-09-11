@@ -2,7 +2,6 @@ package com.silcare.css.Component.textFieldCustom
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -22,22 +21,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldDropDown(
+    modifier: Modifier = Modifier,
     title: String,
-    placeholder: String = "-----------"
+    placeholder: String = "-----------",
+    pilihan: List<String> = listOf("Item 1", "Item 2", "Item 3"),
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
-    var kecamatan by remember { mutableStateOf("") }
     var expandedKecamatan by remember { mutableStateOf(false) }
-    val kecamatanList = listOf("Batam Kota", "Bengkong", "Sekupang", "Lubuk Baja", "Sei Beduk")
 
     ExposedDropdownMenuBox(
-//        modifier = Modifier.border(width = 1.dp, shape = RoundedCornerShape(10.dp), color = Color(0xFFEEDDFF)),
         expanded = expandedKecamatan,
         onExpandedChange = { expandedKecamatan = !expandedKecamatan },
         content = {
@@ -45,19 +44,18 @@ fun TextFieldDropDown(
                 contentAlignment = Alignment.CenterStart,
                 content = {
                     TextField(
-                        value = kecamatan,
+                        value = value,
                         onValueChange = {},
                         readOnly = true,
                         placeholder = { Text(placeholder) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedKecamatan) },
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = modifier
                             .menuAnchor()
                             .clip(RoundedCornerShape(10.dp))
                             .border(
                                 width = 1.dp,
                                 color = Color(0xFFEEDDFF),
-                                shape = RoundedCornerShape(10.dp)
+                                shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color(0xffffffff),
@@ -71,11 +69,11 @@ fun TextFieldDropDown(
                         expanded = expandedKecamatan,
                         onDismissRequest = { expandedKecamatan = false }
                     ) {
-                        kecamatanList.forEach { item ->
+                        pilihan.forEach { item ->
                             DropdownMenuItem(
                                 text = { Text(item) },
                                 onClick = {
-                                    kecamatan = item
+                                    onValueChange(item)
                                     expandedKecamatan = false
                                 }
                             )
@@ -93,13 +91,14 @@ fun TextFieldDropDown(
     )
 }
 
-
 @Preview
 @Composable
 private fun DataUserPreview() {
     MaterialTheme {
         TextFieldDropDown(
-            title = "Kecamatan"
+            title = "Kecamatan",
+            onValueChange = {},
+            value = ""
         )
     }
 }

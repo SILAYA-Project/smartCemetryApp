@@ -1,5 +1,6 @@
 package com.silcare.css.page
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,18 +11,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.silcare.css.Component.cardComponent.CardMakam
 import com.silcare.css.Component.top_app_bar.TopSearchBarFillter
+import com.silcare.css.api.MakamViewModel
 
 @Composable
-fun HomePage() {
+fun HomePage(viewModel: MakamViewModel = viewModel(),navController: NavController) {
+    val blokMakamList by viewModel.blokMakamList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchDataBlokMakam()
+    }
+
     Box(
         modifier = Modifier.fillMaxSize().background(Color.White),
         content = {
@@ -44,11 +59,16 @@ fun HomePage() {
                     )
                     Spacer(modifier = Modifier.padding(5.dp))
                     LazyColumn {
-                        items(count = 20){
+                        items(blokMakamList){
                             CardMakam(
-                                namaMakam = "Anggrek",
-                                terisi = 10,
-                                max = 100
+                                namaMakam = it.nama_blok,
+                                terisi = it.isi,
+                                max = it.maximal,
+                                onClick = {
+                                    viewModel.fetchIdMakamByBlokOnce(it.id, onResult = {})
+                                    Log.d("id blok", it.id)
+                                    navController.navigate("noMakamPage/${it.id}")
+                                }
                             )
                             Spacer(modifier = Modifier.padding(5.dp))
                         }
@@ -62,5 +82,5 @@ fun HomePage() {
 @Preview(showBackground = true)
 @Composable
 private fun HomePagePrev() {
-    HomePage()
+    HomePage(navController = rememberNavController())
 }

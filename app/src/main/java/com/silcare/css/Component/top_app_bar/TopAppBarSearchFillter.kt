@@ -51,7 +51,7 @@ fun TopSearchBarFillter(
     Row(
         modifier = Modifier
             .padding(top = 20.dp, bottom = 15.dp)
-            .shadow(4.dp, shape = CircleShape, clip = false)
+//            .shadow(4.dp, shape = CircleShape, clip = false)
             .clip(CircleShape)
             .height(54.dp)
             .fillMaxWidth()

@@ -102,7 +102,7 @@ fun CompCustomTextField(
                 color = backgroundColor,
                 shape = RoundedCornerShape(5.dp)
             )
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+            .padding(horizontal = 10.dp),
         text = title,
         fontSize = 15.sp,
 //        color = textColor,
