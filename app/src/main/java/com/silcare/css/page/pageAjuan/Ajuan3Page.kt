@@ -1,6 +1,7 @@
 package com.silcare.css.page.pageAjuan
 
 
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +49,7 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
     val viewModel: MakamViewModel = viewModel()
     val blokList by viewModel.blokMakamList.collectAsState()
     val idMakamList by viewModel.idMakamList.collectAsState()
-
+    val context = LocalContext.current
     var selectedBlok by remember { mutableStateOf("") }
     var selectedIdMakam by remember { mutableStateOf("") }
     val dataList = AjuanDataStore.listData
@@ -159,61 +161,30 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
                             .padding(start = 30.dp, end = 30.dp, top = 15.dp, bottom = 15.dp)
                             .clickable {
                                 println("add ti tekan")
-                                val data = navController.previousBackStackEntry
+
+                                var data = navController.previousBackStackEntry
                                     ?.savedStateHandle
                                     ?.get<AdminNotifikasi>("adminData")
-                                println(data)
-                                val newData = AdminNotifikasi(
-                                    status = data?.status ?: false,
-                                    inputData = data?.inputData ?: false,
-                                    fotoKtpPerwakilan = data?.fotoKtpPerwakilan ?: false,
-                                    fotoKtp = data?.fotoKtp ?: false,
-                                    fotoKk = data?.fotoKk ?: false,
-                                    suratKematian = data?.suratKematian ?: false,
-                                    statusNotifikasi = data?.statusNotifikasi ?: false,
 
-                                    id_mayat = data?.id_mayat ?: "",
-                                    di_wakilkan_oleh = data?.di_wakilkan_oleh ?: "",
-                                    usia = data?.usia ?: 0,
-                                    nama_mayat = data?.nama_mayat ?: "",
-                                    blok_makam = data?.blok_makam ?: "",
-                                    id_makam = data?.id_makam ?: "",
-                                    meninggal_di = data?.meninggal_di ?: "",
-                                    skm = data?.skm ?: "",
-                                    nomor_kk = data?.nomor_kk ?: 0,
-                                    nomor_nik = data?.nomor_nik ?: 0,
-                                    tanggal_di_makamkan = data?.tanggal_di_makamkan,
-                                    tanggal_meninggal = data?.tanggal_meninggal,
-                                    tempat_dan_tanggal_lahir = data?.tempat_dan_tanggal_lahir ?: "",
-                                    jenis_kelamin = data?.jenis_kelamin ?: "",
-                                    nomor_telpon = data?.nomor_telpon ?: "",
-                                    wafat = data?.wafat ?: "",
-                                    sebab = data?.sebab ?: "",
-                                    alamatm = data?.alamatm ?: "",
-                                    alamatw = data?.alamatw ?: "",
-                                    email = data?.email ?: "",
-                                    rtm = data?.rtm ?: "",
-                                    rwm = data?.rwm ?: "",
-                                    rtw = data?.rtw ?: "",
-                                    rww = data?.rww ?: "",
-                                    kelurahanm = data?.kelurahanm ?: "",
-                                    kecamatanm = data?.kecamatanm ?: "",
-                                    kelurahanw = data?.kelurahanw ?: "",
-                                    kecamatanw = data?.kecamatanw ?: "",
-                                    hubungan = data?.hubungan ?: "",
-                                    agama = data?.agama ?: "",
-                                    kewarganegaraan = data?.kewarganegaraan ?: "",
-                                    nama_bapak = data?.nama_bapak ?: "",
-                                    nama_ibu = data?.nama_ibu ?: "",
-                                    suami_atau_istri = data?.suami_atau_istri ?: "",
-                                    anak = data?.anak ?: ""
-                                )
-                                println(AjuanDataStore.getLastData())
+                                if (data == null) {
+                                    data = AjuanDataStore.getLastData()
+                                }
+
+                                Log.d("ajuan3", "Data yang dipakai: $data")
+
+                                val newData = data?.copy(
+                                    blok_makam = selectedBlok,
+                                    id_makam = selectedIdMakam
+                                ) ?: AdminNotifikasi()
+
+                                Log.d("ajuan3", "Data dikirim: $newData")
+
                                 viewModel.tambahNotifikasiAdmin(newData) { success ->
                                     if (success) {
-                                        Log.d("tambah mayat", "Notifikasi berhasil ditambahkan")
+                                        Log.d("tambah mayat", "✅ Notifikasi berhasil ditambahkan")
+                                        (context as? Activity)?.finish()
                                     } else {
-                                        Log.e("tambah mayat", "Notifikasi gagal")
+                                        Log.e("tambah mayat", "❌ Notifikasi gagal")
                                     }
                                 }
                             },

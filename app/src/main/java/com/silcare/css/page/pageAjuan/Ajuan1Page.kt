@@ -1,5 +1,7 @@
 package com.silcare.css.page.pageAjuan
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.silcare.css.Component.textFieldCustom.TextFieldDropDown
 import com.silcare.css.api.AdminNotifikasi
 import com.silcare.css.api.AjuanDataStore
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
     var di_wakilkan_oleh by remember { mutableStateOf(data.di_wakilkan_oleh) }
@@ -48,6 +52,7 @@ fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
     var kelurahan by remember { mutableStateOf(data.kelurahanw) }
     var kecamatan by remember { mutableStateOf(data.kecamatanw) }
     var hubungan by remember { mutableStateOf(data.hubungan) }
+    val activity = (LocalContext.current as? Activity)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -181,7 +186,7 @@ fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
                             )
                             .padding(start = 20.dp, end = 20.dp, top = 15.dp, bottom = 15.dp)
                             .clickable {
-                                navController.popBackStack()
+                                activity?.finish()
                             },
                         content = {
                             Text(text = "Batal", color = Color(0xFF38008B), fontSize = 13.sp)

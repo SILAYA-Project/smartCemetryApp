@@ -235,7 +235,7 @@ fun CardAdminNotifikasi(
                                                 .clickable { onClickBatal() },
                                             contentAlignment = Alignment.Center,
                                             content = {
-                                                Text(text = "Batal", color = Color(0xFFCC0000))
+                                                Text(text = "Tolak", color = Color(0xFFCC0000))
                                             }
                                         )
                                         Spacer(modifier = Modifier.size(5.dp))
