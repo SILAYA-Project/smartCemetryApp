@@ -1,5 +1,7 @@
 package com.silcare.css.Component.cardComponent
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,15 +29,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.silcare.css.api.Mayat
+import com.silcare.css.api.toFormattedString
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
+import com.valentinilk.shimmer.shimmer
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CardDataMayat(
     data: Mayat
 ) {
     var expanded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
-            .border(width = 1.dp, shape = RoundedCornerShape(10.dp), color = Color(0xFFEEDDFF))
+            .border(width = 1.dp, shape = RoundedCornerShape(10.dp), color = Color(0x3238008b))
             .background(Color.White)
             .clickable { expanded = !expanded },
         content = {
@@ -63,8 +72,8 @@ fun CardDataMayat(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Text(
-                                text = data.tanggal_di_makamkan,
-                                fontSize = 13.sp,
+                                text = data.tanggal_di_makamkan.toFormattedString() ,
+                                fontSize = 13.sp
                             )
                             Text(
                                 text = "${data.usia} Tahun",
@@ -72,6 +81,7 @@ fun CardDataMayat(
                             )
                         }
                     )
+
                     if (expanded) {
                         Spacer(modifier = Modifier.size(10.dp))
                         Row(
@@ -133,7 +143,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = data.wafat.toString(), fontSize = 13.sp)
+                            Text(text = data.tanggal_meninggal.toFormattedString(), fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -154,7 +164,7 @@ fun CardDataMayat(
                             Text(text = data.alamat, fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
-                        Divider(color = Color(0xFFEEDDFF))
+                        Divider(color = Color(0x3238008b))
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
                             Text(
@@ -162,7 +172,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp,
                             )
-                            Text(text = data.di_wakilkan_oleh, fontSize = 13.sp,fontWeight = FontWeight.Bold)
+                            Text(text = data.di_wakilkan_oleh, fontSize = 13.sp,fontWeight = FontWeight.Medium ,color = Color(0xFF38008B),)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -171,7 +181,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = if (data.nomor_nik != 0) data.nomor_nik.toString() else "-----", fontSize = 13.sp)
+                            Text(text = if (data.nomor_nik != "") data.nomor_nik.toString() else "-----", fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -180,7 +190,7 @@ fun CardDataMayat(
                                 color = Color(0xFF7C7C7C),
                                 fontSize = 13.sp
                             )
-                            Text(text = if (data.nomor_kk != 0) data.nomor_kk.toString() else "-----", fontSize = 13.sp)
+                            Text(text = if (data.nomor_kk != "") data.nomor_kk.toString() else "-----", fontSize = 13.sp)
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                         Row {
@@ -207,15 +217,71 @@ fun CardDataMayat(
     )
 }
 
+@Composable
+fun CardDataMayatShimmer() {
+    val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.View)
+
+    Box(
+        modifier = Modifier
+            .border(1.dp, Color(0xFFEEDDFF), RoundedCornerShape(10.dp))
+            .background(Color.White)
+            .padding(15.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(16.dp)
+                        .fillMaxWidth(0.4f)
+                        .shimmer(shimmer)
+                        .background(Color.LightGray, RoundedCornerShape(4.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .height(16.dp)
+                        .fillMaxWidth(0.2f)
+                        .shimmer(shimmer)
+                        .background(Color.LightGray, RoundedCornerShape(4.dp))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .fillMaxWidth(0.5f)
+                        .shimmer(shimmer)
+                        .background(Color.LightGray, RoundedCornerShape(4.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .fillMaxWidth(0.2f)
+                        .shimmer(shimmer)
+                        .background(Color.LightGray, RoundedCornerShape(4.dp))
+                )
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun CardDataMayatPrev() {
     CardDataMayat(
         data = Mayat(
             nama_mayat = "MS ALAMSYAH CHATIB BASA",
-            usia = 65,
-            tanggal_di_makamkan = "Rabu, 01/01/2003, 17:00",
-            jenis_kelamin = "Laki-Laki"
+            usia = "65",
+            jenis_kelamin = "Laki-Laki",
         )
     )
 }

@@ -30,14 +30,14 @@ import com.silcare.css.R
 import com.silcare.css.api.IdMakam
 
 @Composable
-fun CardNoMayat(data: IdMakam, onClik: () -> Unit) {
+fun CardNoMayat(data: IdMakam) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
             .border(
                 width = 1.dp,
-                color = Color(0xFFEEDDFF),
+                color = Color(0x3238008b),
                 shape = RoundedCornerShape(10.dp)
             ),
         content = {
@@ -57,18 +57,28 @@ fun CardNoMayat(data: IdMakam, onClik: () -> Unit) {
                                 Text(
                                     text = "${data.code_makam} - ${data.nama_blok}",
                                     color = Color(0xFF38008B),
-                                    fontSize = 20.sp,
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                             Spacer(modifier = Modifier.height(5.dp))
-                            if (data.status) {
-                                Text(text = data.namaAlmarhum, fontSize = 15.sp, color = Color(0xFF38008B))
+                            if (data.namaAlmarhum.isNotEmpty()) {
+//                            if (data.status) {
+                                Text(
+                                    text = data.namaAlmarhum,
+                                    fontSize = 15.sp,
+                                    color = Color(0xFF38008B)
+                                )
                             } else {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     content = {
-                                        Text(text = "Tersedia", fontSize = 15.sp, color = Color(0xFF848484), fontWeight = FontWeight.Bold)
+                                        Text(
+                                            text = "Tersedia",
+                                            fontSize = 15.sp,
+                                            color = Color(0xFF848484),
+                                            fontWeight = FontWeight.Bold
+                                        )
                                         Spacer(modifier = Modifier.size(10.dp))
                                         Icon(
                                             modifier = Modifier.size(20.dp),
@@ -84,15 +94,15 @@ fun CardNoMayat(data: IdMakam, onClik: () -> Unit) {
                     Box(
                         modifier = Modifier
                             .clip(shape = RoundedCornerShape(10.dp))
-                            .background(Color(0xFFFEF7FF))
-                            .size(80.dp),
+                            .background(Color(0xFF38008B))
+                            .size(60.dp),
                         contentAlignment = Alignment.Center,
                         content = {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 painter = painterResource(R.drawable.petaicon),
                                 contentDescription = null,
-                                tint = Color(0xFF38008B)
+                                tint = Color(0xFFFEF7FF)
                             )
                         }
                     )
@@ -105,5 +115,5 @@ fun CardNoMayat(data: IdMakam, onClik: () -> Unit) {
 @Preview
 @Composable
 private fun CardNoMayatPrev() {
-    CardNoMayat(data = IdMakam(status = true), onClik = {})
+    CardNoMayat(data = IdMakam(status = true))
 }

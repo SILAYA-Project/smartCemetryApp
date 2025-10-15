@@ -1,5 +1,7 @@
 package com.silcare.css.page.pageAjuan
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,14 +35,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.silcare.css.Component.textFieldCustom.DatePickerBox
+import com.google.firebase.Timestamp
+import com.silcare.css.Component.textFieldCustom.DateTimePickerBox
 import com.silcare.css.Component.textFieldCustom.TextFieldCustom
 import com.silcare.css.Component.textFieldCustom.TextFieldDropDown
 import com.silcare.css.api.AdminNotifikasi
 import com.silcare.css.api.AjuanDataStore
-import java.time.LocalDate
-import java.util.Date
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
     var usia by remember { mutableStateOf(data.usia) }
@@ -67,6 +70,27 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
     var suami_atau_istri by remember { mutableStateOf(data.suami_atau_istri) }
     var anak by remember { mutableStateOf(data.anak) }
     var tanggal_meninggal by remember { mutableStateOf(data.tanggal_meninggal) }
+
+    val kecamatanList = listOf(
+        "Batam Kota", "Batu Aji", "Batu Ampar", "Belakang Padang", "Bengkong",
+        "Bulang", "Galang", "Lubuk Baja", "Nongsa", "Sagulung",
+        "Sei Beduk", "Sekupang"
+    )
+
+    val kelurahanMap = mapOf(
+        "Batam Kota" to listOf("Baloi Permai", "Belian", "Sukajadi", "Sungai Panas", "Taman Baloi", "Teluk Tering"),
+        "Batu Aji" to listOf("Bukit Tempayan", "Buliang", "Kibing", "Tanjung Uncang"),
+        "Batu Ampar" to listOf("Batu Merah", "Kampung Seraya", "Sungai Jodoh", "Tanjung Sengkuang"),
+        "Belakang Padang" to listOf("Kasu", "Pecong", "Pemping", "Pulau Terong", "Sekanak Raya", "Tanjung Sari"),
+        "Bengkong" to listOf("Bengkong Harapan", "Bengkong Indah", "Bengkong Laut", "Sadai", "Tanjung Buntung"),
+        "Bulang" to listOf("Batu Legong", "Bulang Lintang", "Pantai Gelam", "Pulau Buluh", "Pulau Setokok", "Temoyong"),
+        "Galang" to listOf("Air Raja", "Galang Baru", "Karas", "Pulau Abang", "Rempang Cate", "Sembulang", "Sijantung", "Subang Mas"),
+        "Lubuk Baja" to listOf("Baloi Indah", "Batu Selicin", "Kampung Pelita", "Lubuk Baja Kota", "Tanjung Uma"),
+        "Nongsa" to listOf("Batu Besar", "Kabil", "Ngenang", "Sambau"),
+        "Sagulung" to listOf("Sagulung Kota", "Sungai Binti", "Sungai Langkai", "Sungai Lekop", "Sungai Pelunggut", "Tembesi"),
+        "Sei Beduk" to listOf("Duriangkang", "Mangsang", "Muka Kuning", "Tanjung Piayu"),
+        "Sekupang" to listOf("Tiban Asri", "Tanjung Riau", "Tiban Lama", "Tiban Baru", "Tiban Indah", "Patam Lestari", "Sungai Harapan", "Tanjung Pinggir")
+    )
 
     Column(
         modifier = Modifier
@@ -97,9 +121,9 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
             )
             Spacer(modifier = Modifier.padding(20.dp))
             TextFieldCustom(
-                value = nomor_kk.toString() ,
+                value = nomor_kk ,
                 onValueChange = {
-                    nomor_kk = it.toIntOrNull() ?: 0
+                    nomor_kk = it
                 },
                 title = "Nomor KK",
                 placeholder = "Masukan Nomor KK Almarhum",
@@ -109,7 +133,7 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
                 value = alamat,
-                onValueChange = {},
+                onValueChange = {alamat = it},
                 title = "Alamat",
                 placeholder = "ALamat Almarhum",
                 trailingIcon = {},
@@ -120,9 +144,9 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
                 content = {
                     TextFieldCustom(
                         modifier = Modifier.width(170.dp),
-                        value = usia.toString(),
+                        value = usia,
                         onValueChange = {
-                            usia = it.toIntOrNull() ?: 0
+                            usia = it
                         },
                         title = "Umur",
                         placeholder = "00",
@@ -197,25 +221,22 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
             )
             Spacer(modifier = Modifier.size(20.dp))
             TextFieldDropDown(
-                title = "Kelurahan",
+                title = "Kecamatan",
                 modifier = Modifier.fillMaxWidth(),
+                value = kecamatan,
                 onValueChange = {
-                    kelurahan = it
+                    kecamatan = it
+                    kelurahan = ""
                 },
-                pilihan = listOf("Kelurahan 1", "Kelurahan 2", "Kelurahan 3"),
-                placeholder = "-----",
-                value = kelurahan,
+                pilihan = kecamatanList
             )
             Spacer(modifier = Modifier.size(20.dp))
             TextFieldDropDown(
-                title = "Kecamatan",
+                title = "Kelurahan",
                 modifier = Modifier.fillMaxWidth(),
-                onValueChange = {
-                    kecamatan = it
-                },
-                pilihan = listOf("Kelurahan 1", "Kelurahan 2", "Kelurahan 3"),
-                placeholder = "-----",
-                value = kecamatan,
+                value = kelurahan,
+                onValueChange = { kelurahan = it },
+                pilihan = kelurahanMap[kecamatan] ?: emptyList()
             )
             Spacer(modifier = Modifier.padding(15.dp))
             TextFieldCustom(
@@ -273,10 +294,10 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
                 isError = false
             )
             Spacer(modifier = Modifier.padding(15.dp))
-            DatePickerBox(
+            DateTimePickerBox(
                 title = "Meninggal pada tanggal",
                 modifier = Modifier.fillMaxWidth(),
-                onDateSelected = { date: LocalDate ->
+                onDateTimeSelected = { date: Timestamp ->
                     tanggal_meninggal = date
                 }
             )
@@ -303,10 +324,10 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
                 isError = false
             )
             Spacer(modifier = Modifier.padding(15.dp))
-            DatePickerBox(
+            DateTimePickerBox(
                 title = "Akan Dimakamkan tanggal",
                 modifier = Modifier.fillMaxWidth(),
-                onDateSelected = { date: LocalDate ->
+                onDateTimeSelected = { date: Timestamp ->
                     tanggal_di_makamkan = date
                 }
             )
@@ -377,6 +398,7 @@ fun Ajuan2Page(navController: NavController, data: AdminNotifikasi) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun Ajuan1PagePrev() {

@@ -27,74 +27,53 @@ import androidx.navigation.compose.rememberNavController
 import com.silcare.css.R
 
 @Composable
-fun BottomBarMain(navController: NavController) {
+fun BottomBarMain(
+    navController: NavController,
+    onDirectionChange: (Int) -> Unit
+) {
     var selectedIndex by remember { mutableStateOf(0) }
+    val items = listOf("home", "database", "notifikasi")
+
     Box(
         modifier = Modifier
-            .navigationBarsPadding()
             .fillMaxWidth()
+            .navigationBarsPadding()
             .background(Color.White)
-            .padding(8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(56.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = if (selectedIndex == 0) painterResource(R.drawable.iconhomefill)
-                else painterResource(R.drawable.iconhome),
-                contentDescription = "Home",
-                tint = Color(0xFF38008B),
-                modifier = Modifier
-                    .size(25.dp)
-                    .clickable {
-                        selectedIndex = 0
-                        navController.navigate("home")
-                    }
-            )
-
-            Icon(
-                painter = if (selectedIndex == 1) painterResource(R.drawable.icondatabasefill)
-                else painterResource(R.drawable.icondatabase),
-                contentDescription = "Database",
-                tint = Color(0xFF38008B),
-                modifier = Modifier
-                    .size(25.dp)
-                    .clickable {
-                        selectedIndex = 1
-                        navController.navigate("database")
-                    }
-            )
-
-            Icon(
-                painter = if (selectedIndex == 2) painterResource(R.drawable.iconnotifikasifill)
-                else painterResource(R.drawable.iconnotifikasi),
-                contentDescription = "Notifikasi",
-                tint = Color(0xFF38008B),
-                modifier = Modifier
-                    .size(25.dp)
-                    .clickable {
-                        selectedIndex = 2
-                        navController.navigate("notifikasi")
-                    }
-            )
-
-//            Icon(
-//                painter = if (selectedIndex == 3) painterResource(R.drawable.iconakunfill) else painterResource(
-//                    R.drawable.iconakun
-//                ),
-//                contentDescription = "Akun",
-//                tint = Color(0xFF38008B),
-//                modifier = Modifier
-//                    .size(25.dp)
-//                    .clickable {
-//                        selectedIndex = 3
-//                        navController.navigate("Akun")
-//                    }
-//            )
+            items.forEachIndexed { index, route ->
+                Icon(
+                    painter = painterResource(
+                        id = when (route) {
+                            "home" -> if (selectedIndex == index) R.drawable.iconhomefill else R.drawable.iconhome
+                            "database" -> if (selectedIndex == index) R.drawable.icondatabasefill else R.drawable.icondatabase
+                            "notifikasi" -> if (selectedIndex == index) R.drawable.iconnotifikasifill else R.drawable.iconnotifikasi
+                            else -> R.drawable.iconhome
+                        }
+                    ),
+                    contentDescription = route,
+                    tint = Color(0xFF38008B),
+                    modifier = Modifier
+                        .size(25.dp)
+                        .clickable {
+                            if (selectedIndex != index) {
+                                val oldIndex = selectedIndex
+                                selectedIndex = index
+                                onDirectionChange(if (index > oldIndex) 1 else -1)
+                                navController.navigate(route) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                )
+            }
         }
     }
 }
@@ -102,5 +81,5 @@ fun BottomBarMain(navController: NavController) {
 @Preview
 @Composable
 private fun BottomBarMainPrev() {
-    BottomBarMain(navController = rememberNavController())
+    BottomBarMain(navController = rememberNavController(), onDirectionChange = {})
 }

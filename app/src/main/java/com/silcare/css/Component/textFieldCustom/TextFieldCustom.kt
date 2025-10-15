@@ -40,7 +40,7 @@ fun TextFieldCustom(
     onValueChange: (String) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
-    val borderColor = if (isError) colors.error else Color(0xFFEEDDFF)
+    val borderColor = if (isError) colors.error else Color(0x6138008b)
 
     Box(
         contentAlignment = Alignment.CenterStart

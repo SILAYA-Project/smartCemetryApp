@@ -47,7 +47,12 @@ import com.silcare.css.R
 import java.io.File
 
 @Composable
-fun CardAddImage(width: Int = 120, desc: String = "", title: String = "") {
+fun CardAddImage(
+    width: Int = 120,
+    desc: String = "",
+    title: String = "",
+    onImageSelected: (Uri?) -> Unit = {}
+) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var tempPhotoUri by remember { mutableStateOf<Uri?>(null) }
     var showDialog by remember { mutableStateOf(false) }
@@ -56,22 +61,25 @@ fun CardAddImage(width: Int = 120, desc: String = "", title: String = "") {
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
-        if (success) imageUri = tempPhotoUri else Log.e("camera", "Gagal mengambil gambar")
+        if (success) {
+            imageUri = tempPhotoUri
+            onImageSelected(tempPhotoUri)
+        }
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
         imageUri = uri
+        onImageSelected(uri)
     }
-
 
     Box(contentAlignment = Alignment.CenterStart) {
         Box(
             modifier = Modifier
                 .border(
                     width = 1.dp,
-                    color = Color(0xFFEEDDFF),
+                    color = Color(0x6138008b),
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(15.dp)
@@ -102,12 +110,14 @@ fun CardAddImage(width: Int = 120, desc: String = "", title: String = "") {
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 200.dp)
-                            .border(1.dp, Color(0xFFEEDDFF), RoundedCornerShape(10.dp)),
+                            .border(1.dp, Color(0x6138008b), RoundedCornerShape(10.dp)),
                         contentScale = ContentScale.Crop
                     )
-
                     IconButton(
-                        onClick = { imageUri = null },
+                        onClick = {
+                            imageUri = null
+                            onImageSelected(null) // 👈 reset juga
+                        },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
@@ -131,7 +141,7 @@ fun CardAddImage(width: Int = 120, desc: String = "", title: String = "") {
             title = title,
             modifier = Modifier.offset(x = 5.dp, y = (-35).dp),
             backgroundColor = Color.White,
-            textColor = Color(0xFFEEDDFF)
+            textColor = Color(0x6138008b)
         )
     }
 

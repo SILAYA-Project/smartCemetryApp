@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,21 +29,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.silcare.css.R
 import coil.compose.AsyncImage
+import com.silcare.css.R
 
 @Composable
 fun TopSearchBarFillter(
     value: String,
     onValueChange: (String) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    imgUrl: String
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val focusManager = LocalFocusManager.current
@@ -76,15 +77,15 @@ fun TopSearchBarFillter(
                 .fillMaxWidth()
                 .padding(end = 20.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
                 disabledContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 cursorColor = colorScheme.primary,
                 unfocusedTextColor = colorScheme.onSurface,
-                focusedTextColor = colorScheme.onSurface
+                focusedTextColor = colorScheme.onSurface,
             ),
             maxLines = 1,
             singleLine = true,
@@ -96,6 +97,22 @@ fun TopSearchBarFillter(
                     focusManager.clearFocus()
                 }
             ),
+            leadingIcon = {
+                IconButton(
+                    modifier = Modifier.size(30.dp),
+                    onClick = {
+                        focusManager.clearFocus()
+                    },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.iconsearch),
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                            tint = Color(0xff38008B)
+                        )
+                    }
+                )
+            },
             trailingIcon = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -107,28 +124,37 @@ fun TopSearchBarFillter(
                             },
                             content = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.iconsearch),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(15.dp),
-                                    tint = Color(0xffb889ff)
-                                )
-                            }
-                        )
-                        IconButton(
-                            modifier = Modifier.size(30.dp),
-                            onClick = {
-                                focusManager.clearFocus()
-                                onClick()
-                            },
-                            content = {
-                                Icon(
                                     painter = painterResource(id = R.drawable.filter),
                                     contentDescription = null,
                                     modifier = Modifier.size(20.dp),
-                                    tint = Color(0xffb889ff),
+                                    tint = Color(0xff38008B),
                                 )
                             }
                         )
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(35.dp)
+                                .background(
+                                    color = colorScheme.primary,
+                                    shape = CircleShape
+                                )
+                                .clickable {
+                                    focusManager.clearFocus()
+                                    onClick()
+                                },
+                            content = {
+                                AsyncImage(
+                                    model = imgUrl,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.FillBounds
+                                )
+                            }
+                        )
+
                     }
                 )
             }
@@ -144,7 +170,12 @@ private fun TopSearchBarPrev() {
     Box(
         modifier = Modifier.fillMaxSize(),
         content = {
-            TopSearchBarFillter(value = value, onValueChange = { value = it }, onClick = {})
+            TopSearchBarFillter(
+                value = value,
+                onValueChange = { value = it },
+                onClick = {},
+                imgUrl = ""
+            )
         }
     )
 }

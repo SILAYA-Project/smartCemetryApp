@@ -53,6 +53,27 @@ fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
     var kecamatan by remember { mutableStateOf(data.kecamatanw) }
     var hubungan by remember { mutableStateOf(data.hubungan) }
     val activity = (LocalContext.current as? Activity)
+
+    val kecamatanList = listOf(
+        "Batam Kota", "Batu Aji", "Batu Ampar", "Belakang Padang", "Bengkong",
+        "Bulang", "Galang", "Lubuk Baja", "Nongsa", "Sagulung",
+        "Sei Beduk", "Sekupang"
+    )
+
+    val kelurahanMap = mapOf(
+        "Batam Kota" to listOf("Baloi Permai", "Belian", "Sukajadi", "Sungai Panas", "Taman Baloi", "Teluk Tering"),
+        "Batu Aji" to listOf("Bukit Tempayan", "Buliang", "Kibing", "Tanjung Uncang"),
+        "Batu Ampar" to listOf("Batu Merah", "Kampung Seraya", "Sungai Jodoh", "Tanjung Sengkuang"),
+        "Belakang Padang" to listOf("Kasu", "Pecong", "Pemping", "Pulau Terong", "Sekanak Raya", "Tanjung Sari"),
+        "Bengkong" to listOf("Bengkong Harapan", "Bengkong Indah", "Bengkong Laut", "Sadai", "Tanjung Buntung"),
+        "Bulang" to listOf("Batu Legong", "Bulang Lintang", "Pantai Gelam", "Pulau Buluh", "Pulau Setokok", "Temoyong"),
+        "Galang" to listOf("Air Raja", "Galang Baru", "Karas", "Pulau Abang", "Rempang Cate", "Sembulang", "Sijantung", "Subang Mas"),
+        "Lubuk Baja" to listOf("Baloi Indah", "Batu Selicin", "Kampung Pelita", "Lubuk Baja Kota", "Tanjung Uma"),
+        "Nongsa" to listOf("Batu Besar", "Kabil", "Ngenang", "Sambau"),
+        "Sagulung" to listOf("Sagulung Kota", "Sungai Binti", "Sungai Langkai", "Sungai Lekop", "Sungai Pelunggut", "Tembesi"),
+        "Sei Beduk" to listOf("Duriangkang", "Mangsang", "Muka Kuning", "Tanjung Piayu"),
+        "Sekupang" to listOf("Tiban Asri", "Tanjung Riau", "Tiban Lama", "Tiban Baru", "Tiban Indah", "Patam Lestari", "Sungai Harapan", "Tanjung Pinggir")
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,9 +113,9 @@ fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(
-                value = nomor_nik.toString(),
+                value = nomor_nik,
                 onValueChange = {
-                    nomor_nik = it.toInt()
+                    nomor_nik = it
                 },
                 title = "Nomor Idetitas / KTP",
                 placeholder = "092739------",
@@ -143,23 +164,22 @@ fun Ajuan1Page(navController: NavController,data : AdminNotifikasi) {
 
             Spacer(modifier = Modifier.size(20.dp))
             TextFieldDropDown(
-                title = "Kelurahan",
-                modifier = Modifier.fillMaxWidth(),
-                onValueChange = {
-                    kelurahan = it
-                },
-                value = kelurahan,
-                pilihan = listOf("Kelurahan 1", "Kelurahan 2", "Kelurahan 3")
-            )
-            Spacer(modifier = Modifier.size(20.dp))
-            TextFieldDropDown(
                 title = "Kecamatan",
                 modifier = Modifier.fillMaxWidth(),
                 value = kecamatan,
                 onValueChange = {
                     kecamatan = it
+                    kelurahan = ""
                 },
-                pilihan = listOf("Kecamatan 1", "Kecamatan 2", "Kecamatan 3")
+                pilihan = kecamatanList
+            )
+            Spacer(modifier = Modifier.size(20.dp))
+            TextFieldDropDown(
+                title = "Kelurahan",
+                modifier = Modifier.fillMaxWidth(),
+                value = kelurahan,
+                onValueChange = { kelurahan = it },
+                pilihan = kelurahanMap[kecamatan] ?: emptyList()
             )
             Spacer(modifier = Modifier.padding(10.dp))
             TextFieldCustom(

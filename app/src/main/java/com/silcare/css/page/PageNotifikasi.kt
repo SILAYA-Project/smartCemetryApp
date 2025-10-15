@@ -2,7 +2,6 @@ package com.silcare.css.page
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,8 +41,24 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
                     CardAdminNotifikasi(
                         data = it,
                         onClickDitail = {},
-                        onClickBatal = {},
-                        onClickKonfirmasi = {}
+                        onClickKonfirmasi = {
+                            viewModel.konfirmasiNotifikasi(
+                                notifikasi = it,
+                            ) { success ->
+                                if (success) {
+                                    viewModel.fetchDataNotifikasi()
+                                }
+                            }
+                        },
+                        onClickBatal = {
+                            viewModel.tolakNotifikasi(
+                                notifikasi = it,
+                            ) { success ->
+                                if (success) {
+                                    viewModel.fetchDataNotifikasi()
+                                }
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.padding(1.dp))
                 }

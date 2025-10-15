@@ -2,7 +2,11 @@ package com.silcare.css.page.pageAjuan
 
 
 import android.app.Activity
+import android.net.Uri
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,17 +41,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Timestamp
 import com.silcare.css.Component.cardComponent.CardAddImage
 import com.silcare.css.Component.textFieldCustom.TextFieldDropDown
 import com.silcare.css.api.AdminNotifikasi
 import com.silcare.css.api.AjuanDataStore
 import com.silcare.css.api.MakamViewModel
+import com.silcare.css.api.UploadRepository
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
+fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadRepository: UploadRepository = UploadRepository()) {
     val viewModel: MakamViewModel = viewModel()
     val blokList by viewModel.blokMakamList.collectAsState()
     val idMakamList by viewModel.idMakamList.collectAsState()
@@ -53,6 +65,9 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
     var selectedBlok by remember { mutableStateOf("") }
     var selectedIdMakam by remember { mutableStateOf("") }
     val dataList = AjuanDataStore.listData
+    var ktpAhliWarisUri by remember { mutableStateOf<Uri?>(null) }
+    var ktpAlmarhumUri by remember { mutableStateOf<Uri?>(null) }
+    var skkUri by remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
         println("Total data tersimpan: ${dataList.size}")
@@ -63,7 +78,6 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
     LaunchedEffect(data) {
         Log.d("ajuan3", "Data diterima: $data")
     }
-
 
     Column(
         modifier = Modifier
@@ -82,24 +96,25 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.padding(20.dp))
-            Row(
-                content = {
-                    CardAddImage(
-                        title = "KTP Ahli Waris",
-                        desc = "Upload KTP Ahli Waris"
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    CardAddImage(
-                        title = "KTP Almarhum",
-                        desc = "Upload KTP Almarhum"
-                    )
-                }
-            )
+            Row {
+                CardAddImage(
+                    title = "KTP Ahli Waris",
+                    desc = "Upload KTP Ahli Waris",
+                    onImageSelected = { uri -> ktpAhliWarisUri = uri }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                CardAddImage(
+                    title = "KTP Almarhum",
+                    desc = "Upload KTP Almarhum",
+                    onImageSelected = { uri -> ktpAlmarhumUri = uri }
+                )
+            }
             Spacer(modifier = Modifier.padding(20.dp))
             CardAddImage(
                 title = "SKK",
                 desc = "Surat Keterangan Kematian",
-                width = 150
+                width = 150,
+                onImageSelected = { uri -> skkUri = uri }
             )
             Spacer(modifier = Modifier.padding(20.dp))
             TextFieldDropDown(
@@ -154,50 +169,65 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi) {
                         }
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
+                    val scope = rememberCoroutineScope()
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color(0xFF38008B))
-                            .padding(start = 30.dp, end = 30.dp, top = 15.dp, bottom = 15.dp)
+                            .padding(horizontal = 30.dp, vertical = 15.dp)
                             .clickable {
-                                println("add ti tekan")
+                                scope.launch {
+                                    val urlKtpAhliWaris = ktpAhliWarisUri?.let {
+                                        uploadRepository.uploadToCloudinary(context, it)
+                                    }
+                                    val urlKtpAlmarhum = ktpAlmarhumUri?.let {
+                                        uploadRepository.uploadToCloudinary(context, it)
+                                    }
+                                    val urlSuratKematian = skkUri?.let {
+                                        uploadRepository.uploadToCloudinary(context, it)
+                                    }
 
-                                var data = navController.previousBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.get<AdminNotifikasi>("adminData")
+                                    var data = navController.previousBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.get<AdminNotifikasi>("adminData")
 
-                                if (data == null) {
-                                    data = AjuanDataStore.getLastData()
-                                }
+                                    if (data == null) {
+                                        data = AjuanDataStore.getLastData()
+                                    }
 
-                                Log.d("ajuan3", "Data yang dipakai: $data")
+                                    val newData = data?.copy(
+                                        blok_makam = selectedBlok,
+                                        id_makam = selectedIdMakam,
+                                        tanggal_pengajuan = Timestamp.now(),
+                                        urlFotoKtpPerwakilan = urlKtpAhliWaris ?: "",
+                                        urlFotoKtp = urlKtpAlmarhum ?: "",
+                                        urlSuratKematian = urlSuratKematian ?: ""
+                                    ) ?: AdminNotifikasi()
 
-                                val newData = data?.copy(
-                                    blok_makam = selectedBlok,
-                                    id_makam = selectedIdMakam
-                                ) ?: AdminNotifikasi()
+                                    AjuanDataStore.updateLastData { newData }
 
-                                Log.d("ajuan3", "Data dikirim: $newData")
+                                    val finalData = AjuanDataStore.getLastData()
 
-                                viewModel.tambahNotifikasiAdmin(newData) { success ->
-                                    if (success) {
-                                        Log.d("tambah mayat", "✅ Notifikasi berhasil ditambahkan")
-                                        (context as? Activity)?.finish()
-                                    } else {
-                                        Log.e("tambah mayat", "❌ Notifikasi gagal")
+                                    viewModel.tambahNotifikasiAdmin(finalData!!) { success ->
+                                        if (success) {
+                                            (context as? Activity)?.finish()
+                                        } else {
+                                            Log.e("tambah mayat", "❌ Gagal menambahkan notifikasi")
+                                        }
                                     }
                                 }
-                            },
-                        content = {
-                            Text(text = "Ajukan", color = Color.White, fontSize = 13.sp)
-                        }
-                    )
+                            }
+                    ) {
+                        Text(text = "Ajukan", color = Color.White, fontSize = 13.sp)
+                    }
                 }
             )
         }
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun Ajuan3PagePrev() {

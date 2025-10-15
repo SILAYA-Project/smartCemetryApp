@@ -54,7 +54,7 @@ fun TextFieldDropDown(
                             .clip(RoundedCornerShape(10.dp))
                             .border(
                                 width = 1.dp,
-                                color = Color(0xFFEEDDFF),
+                                color = Color(0x6138008b),
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.colors(

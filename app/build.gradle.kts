@@ -65,11 +65,19 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
-
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     // lorem piscum
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-
-
+    // loading shimmer
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.0.3")
+    // animasi pindah page
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

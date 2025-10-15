@@ -1,28 +1,41 @@
 package com.silcare.css.page
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.silcare.css.Component.cardComponent.CardBerita
+import com.silcare.css.api.MakamViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BeritaPage() {
-    LazyColumn (
-        content = {
-            items (count = 10){
-                CardBerita(
-                    title = "Tanah Longsor di Area Pemakaman, Puluhan...",
-                    desc = "Kubruan – Hujan deras yang mengguyur wilayah Desa Kubruan selama dua hari berturut-turut menyebabkan terjadinya tanah longsor di area pemakaman umum pada Selasa pagi (23/7). Akibat kejadian ini, puluhan makam dilaporkan tertimbun material longsoran, dan akses jalan menuju pemakaman pun tertutup total.",
-                    imgUrl = "https://picsum.photos/${it}"
-                )
-            }
+fun BeritaPage(viewModel: MakamViewModel = viewModel()) {
+    val beritaList by viewModel.beritaList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchDataBerita()
+    }
+
+    LazyColumn {
+        items(beritaList) { berita ->
+            CardBerita(
+                title = berita.title,
+                desc = berita.desc,
+                imgUrl = berita.img_url
+            )
+            println("berita.imgUrl  = ${berita.img_url}")
         }
-    )
+    }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 private fun BeritaPagePrev() {
-    BeritaPage()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        BeritaPage()
+    }
 }

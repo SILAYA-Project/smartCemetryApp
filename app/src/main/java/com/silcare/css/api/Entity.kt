@@ -1,50 +1,56 @@
 package com.silcare.css.api
 
-import java.time.LocalDate
-import java.util.Date
+import com.google.firebase.Timestamp
 
 data class Mayat(
-    val id_mayat: String = "-----",
-    val di_wakilkan_oleh: String = "-----",
-    val usia: Int = 0,
-    val nama_mayat: String = "-----",
-    val blok_makam: String = "-----",
-    val id_makam: String = "-----",
-    val meninggal_di: String = "-----",
-    val skm: String = "-----",
-    val nomor_kk: Int = 0,
-    val nomor_nik: Int = 0,
-    val tanggal_di_makamkan: String = "-----",
-    val tempat_dan_tanggal_lahir: String = "-----",
-    val jenis_kelamin: String = "-----",
-    val nomor_telpon: String = "-----",
-    val wafat: String = "-----",
-    val sebab: String = "-----",
-    val alamat: String = "-----",
-    val email: String = "-----",
-)
-
-data class AdminNotifikasi(
-    val status: Boolean = false,
-    val inputData: Boolean = false,
-    val fotoKtpPerwakilan: Boolean = false,
-    val fotoKtp: Boolean = false,
-    val fotoKk: Boolean = false,
-    val suratKematian: Boolean = false,
-    val statusNotifikasi: Boolean = false,
-
     val id_mayat: String = "",
     val di_wakilkan_oleh: String = "",
-    val usia: Int = 0,
+    val usia: String = "",
     val nama_mayat: String = "",
     val blok_makam: String = "",
     val id_makam: String = "",
     val meninggal_di: String = "",
     val skm: String = "",
-    val nomor_kk: Int = 0,
-    val nomor_nik: Int = 0,
-    val tanggal_di_makamkan: LocalDate? = null,
-    val tanggal_meninggal: LocalDate? = null,
+    val nomor_kk: String = "",
+    val nomor_nik: String = "",
+    val tanggal_di_makamkan: Timestamp? = null,
+    val tanggal_meninggal: Timestamp? = null,
+    val tempat_dan_tanggal_lahir: String = "",
+    val jenis_kelamin: String = "",
+    val nomor_telpon: String = "",
+    val wafat: String = "",
+    val sebab: String = "",
+    val alamat: String = "",
+    val email: String = "",
+)
+
+data class AdminNotifikasi(
+    val status: Boolean = false,
+    val statusNotifikasi: Boolean = false,
+    val inputData: Boolean = false,
+    val fotoKtpPerwakilan: Boolean = false,
+    val fotoKtp: Boolean = false,
+    val fotoKk: Boolean = false,
+    val suratKematian: Boolean = false,
+
+    val urlFotoKtpPerwakilan: String = "",
+    val urlFotoKtp: String = "",
+    val urlFotoKk: String = "",
+    val urlSuratKematian: String = "",
+    val id_mayat: String = "",
+    val di_wakilkan_oleh: String = "",
+    val usia: String = "",
+    val nama_mayat: String = "",
+    val blok_makam: String = "",
+    val id_makam: String = "",
+    val meninggal_di: String = "",
+    val skm: String = "",
+    val nomor_kk: String = "",
+    val nomor_nik: String = "",
+    val tanggal_pengajuan: Timestamp? = null,
+    val tanggal_konfirmasi: Timestamp? = null,
+    val tanggal_di_makamkan: Timestamp? = null,
+    val tanggal_meninggal: Timestamp? = null,
     val tempat_dan_tanggal_lahir: String = "",
     val jenis_kelamin: String = "",
     val nomor_telpon: String = "",
@@ -83,4 +89,17 @@ data class IdMakam(
     val status: Boolean = false,
     val nama_blok: String = "-----",
     val namaAlmarhum: String = "-----"
+)
+
+data class UserData(
+    val username: String,
+    val email: String,
+    val akses: String,
+    val profil: String
+)
+
+data class Berita(
+    val title: String = "",
+    val desc: String = "",
+    val img_url: String = ""
 )
