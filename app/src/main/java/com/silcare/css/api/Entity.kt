@@ -74,6 +74,7 @@ data class AdminNotifikasi(
     val nama_ibu : String = "",
     val suami_atau_istri : String = "",
     val anak : String = "",
+    val docId: String = ""
 )
 
 data class BlokMakam(

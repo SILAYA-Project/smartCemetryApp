@@ -417,7 +417,10 @@ class MakamViewModel : ViewModel() {
         fetchIdMakamByBlokOnce(idBlok) { list ->
             val filteredList = list.filter { !it.status }
             _idMakamList.value = filteredList
+        Log.e("fetchIdMakamByBlok 1: ", filteredList.toString())
         }
+        Log.e("fetchIdMakamByBlok 2: ", idBlok)
+        Log.e("fetchIdMakamByBlok 3: ", _idMakamList.value.toString())
     }
 
     fun fetchIdMakamByBlokOnce(
@@ -598,6 +601,35 @@ class MakamViewModel : ViewModel() {
                     _beritaList.value = list
                 }
         }
+    }
+
+    private val _notifikasiDetail = MutableStateFlow<AdminNotifikasi?>(null)
+    val notifikasiDetail: StateFlow<AdminNotifikasi?> = _notifikasiDetail
+
+    fun fetchNotifikasiByDocId(
+        docId: String,
+        onSuccess: (AdminNotifikasi) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        db.collection("admin notifikasi")
+            .document(docId)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val data = doc.toObject(AdminNotifikasi::class.java)
+                    if (data != null) {
+                        _notifikasiDetail.value = data
+                        onSuccess(data)
+                    } else {
+                        onError("Data tidak valid")
+                    }
+                } else {
+                    onError("Data tidak ditemukan")
+                }
+            }
+            .addOnFailureListener { e ->
+                onError(e.message ?: "Gagal ambil data")
+            }
     }
 }
 

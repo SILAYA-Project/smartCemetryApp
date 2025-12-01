@@ -25,6 +25,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -46,6 +48,7 @@ import com.silcare.css.Component.bottomAppBar.BottomBarUserMain
 import com.silcare.css.api.MakamViewModel
 import com.silcare.css.page.BeritaPage
 import com.silcare.css.page.DatabasePage
+import com.silcare.css.page.DetailNotifikasi
 import com.silcare.css.page.HomePage
 import com.silcare.css.page.NoMakamPage
 import com.silcare.css.page.PageAddBlock
@@ -154,11 +157,6 @@ class MainActivity : ComponentActivity() {
                                     navController = navController
                                 )
                             }
-//                            composable(
-//                                "uploadBerita",
-//                                enterTransition = { slideInHorizontally { full -> full * direction } },
-//                                exitTransition = { slideOutHorizontally { full -> -full * direction } }
-//                                ) { PostingBerita() }
                         }
                         if (showDialog) {
                             PageAddBlock(

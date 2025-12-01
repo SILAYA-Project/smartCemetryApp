@@ -1,5 +1,7 @@
 package com.silcare.css.page
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,13 +24,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.Timestamp
 import com.silcare.css.api.AdminNotifikasi
+import com.silcare.css.api.toFormattedString
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DetailNotifikasi(data: AdminNotifikasi) {
+fun DetailNotifikasi(data: AdminNotifikasi, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .fillMaxSize(),
@@ -50,7 +54,7 @@ fun DetailNotifikasi(data: AdminNotifikasi) {
             InfoRow("Usia", data.usia)
             InfoRow("Jenis Kelamin", data.jenis_kelamin)
             InfoRow("Tempat & Tanggal Lahir", data.tempat_dan_tanggal_lahir)
-            InfoRow("Tanggal Meninggal", formatDate(data.tanggal_meninggal))
+            InfoRow("Tanggal Meninggal", data.tanggal_meninggal.toFormattedString())
             InfoRow("Sebab", data.sebab)
             InfoRow("Blok Makam", data.blok_makam)
             InfoRow("ID Makam", data.id_makam)
@@ -101,9 +105,9 @@ fun DetailNotifikasi(data: AdminNotifikasi) {
         }
 
         DetailSection(title = "Waktu Proses") {
-            InfoRow("Tanggal Pengajuan", formatDate(data.tanggal_pengajuan))
-            InfoRow("Tanggal Konfirmasi", formatDate(data.tanggal_konfirmasi))
-            InfoRow("Tanggal Dimakamkan", formatDate(data.tanggal_di_makamkan))
+            InfoRow("Tanggal Pengajuan", data.tanggal_pengajuan.toFormattedString())
+            InfoRow("Tanggal Konfirmasi", data.tanggal_konfirmasi.toFormattedString())
+            InfoRow("Tanggal Dimakamkan", data.tanggal_di_makamkan.toFormattedString())
         }
     }
 }
@@ -219,13 +223,7 @@ fun ImagePreview(label: String, url: String) {
     }
 }
 
-fun formatDate(timestamp: Timestamp?): String {
-    return timestamp?.let {
-        val sdf = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
-        sdf.format(it.toDate())
-    } ?: "-"
-}
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 private fun DetailNotifikasiPrev() {

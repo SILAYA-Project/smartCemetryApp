@@ -34,10 +34,11 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun CardAdminNotifikasi(
+    docId: String = "",
     data: AdminNotifikasi,
     onClickKonfirmasi: () -> Unit,
     onClickBatal: () -> Unit,
-    onClickDitail: () -> Unit
+    onClickDitail: (String) -> Unit
 ) {
     Box(
         modifier = Modifier.background(if (!data.statusNotifikasi) Color(0xFFFEF7FF) else Color.White)
@@ -61,7 +62,7 @@ fun CardAdminNotifikasi(
                     color = Color(0xFF38008B)
                 )
                 Text(
-                    modifier = Modifier.clickable { onClickDitail() },
+                    modifier = Modifier.clickable { onClickDitail(docId) },
                     text = "Ditail",
                     color = Color(0xFF0059FF),
                     fontWeight = FontWeight.Light

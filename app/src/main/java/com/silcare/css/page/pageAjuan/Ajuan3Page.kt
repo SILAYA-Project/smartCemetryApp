@@ -1,11 +1,9 @@
 package com.silcare.css.page.pageAjuan
 
-
 import android.app.Activity
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -53,7 +49,6 @@ import com.silcare.css.api.AjuanDataStore
 import com.silcare.css.api.MakamViewModel
 import com.silcare.css.api.UploadRepository
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -120,13 +115,15 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadReposito
             TextFieldDropDown(
                 title = "Block Makam",
                 modifier = Modifier.fillMaxWidth(),
-                value = "",
+                value = selectedBlok,
                 onValueChange = { namaBlok ->
                     selectedBlok = namaBlok
                     val blokId = blokList.firstOrNull { it.nama_blok == namaBlok }?.id
                     if (blokId != null) {
                         viewModel.fetchIdMakamByBlok(blokId)
+                        Log.e( "Ajuan3Page 1 : ", blokId)
                     }
+                    Log.e( "Ajuan3Page 2 : ", blokId!!.toString())
                 },
                 pilihan = blokList.map { it.nama_blok }
             )
@@ -181,9 +178,11 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadReposito
                                     val urlKtpAhliWaris = ktpAhliWarisUri?.let {
                                         uploadRepository.uploadToCloudinary(context, it)
                                     }
+
                                     val urlKtpAlmarhum = ktpAlmarhumUri?.let {
                                         uploadRepository.uploadToCloudinary(context, it)
                                     }
+
                                     val urlSuratKematian = skkUri?.let {
                                         uploadRepository.uploadToCloudinary(context, it)
                                     }
