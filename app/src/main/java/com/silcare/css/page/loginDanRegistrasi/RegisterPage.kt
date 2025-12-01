@@ -1,6 +1,8 @@
-package com.silcare.css.page
+package com.silcare.css.page.loginDanRegistrasi
 
-import android.content.Intent
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,28 +18,42 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.navigation.NavController
 import com.silcare.css.Component.textFieldCustom.TextFieldCustom
 import com.silcare.css.R
+import com.silcare.css.api.MakamViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RegisterPage() {
+fun RegisterPage(
+    viewModel: MakamViewModel,
+    navController: NavController,
+) {
+    var nama by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
     Box(
         contentAlignment = Alignment.Center,
         content = {
@@ -63,41 +79,41 @@ fun RegisterPage() {
                     )
                     Spacer(modifier = Modifier.size(30.dp))
                     TextFieldCustom(
-                        value = "",
+                        value = nama,
                         title = "Nama",
                         isError = false,
                         placeholder = "Masukan Nama Anda",
-                        onValueChange = {}
+                        onValueChange = {nama = it}
                     )
                     Spacer(modifier = Modifier.size(30.dp))
                     TextFieldCustom(
-                        value = "",
+                        value = email,
                         title = "Email",
                         isError = false,
                         placeholder = "Masukan Email Anda",
-                        onValueChange = {}
+                        onValueChange = {email = it}
                     )
                     Spacer(modifier = Modifier.size(30.dp))
                     TextFieldCustom(
-                        value = "",
+                        value = password,
                         title = "Password",
                         isError = false,
                         placeholder = "Masukan Password Anda",
                         trailingIcon = {
 
                         },
-                        onValueChange = {}
+                        onValueChange = {password = it}
                     )
                     Spacer(modifier = Modifier.size(30.dp))
                     TextFieldCustom(
-                        value = "",
+                        value = confirmPassword,
                         title = "Password",
                         isError = false,
                         placeholder = "Masukan Password Anda",
                         trailingIcon = {
 
                         },
-                        onValueChange = {}
+                        onValueChange = {confirmPassword = it}
                     )
                     Spacer(modifier = Modifier.size(10.dp))
                     Row(
@@ -122,7 +138,20 @@ fun RegisterPage() {
 
                             Box(
                                 modifier = Modifier
-                                    .clickable { }
+                                    .clickable {
+                                        viewModel.register(
+                                            nama = nama,
+                                            email = email,
+                                            password = password,
+                                            onSuccess = {
+                                                navController.popBackStack()
+                                            },
+                                            onError = { error ->
+
+                                            },
+                                            context = context
+                                        )
+                                    }
                                     .clip(RoundedCornerShape(5.dp))
                                     .background(Color(0xFF38008B))
                                     .width(180.dp)
@@ -145,8 +174,9 @@ fun RegisterPage() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 private fun RegisterPagePrev() {
-    RegisterPage()
+    RegisterPage(MakamViewModel(), NavController(LocalContext.current))
 }

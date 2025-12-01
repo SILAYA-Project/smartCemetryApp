@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">CSS</string>
+    <string name="app_name">Silaya</string>
+    <string name="title_activity_add_csv_to_firebase">AddCsvToFirebaseActivity</string>
+    <string name="title_activity_ajuan">AjuanActivity</string>
+    <string name="title_activity_login_and_regis">LoginAndRegisActivity</string>
+    <string name="title_activity_spalsh_screen">SpalshScreenActivity</string>
+    <string name="title_activity_upload_berita">UploadBeritaActivity</string>
+    <string name="title_activity_latihan">LatihanActivity</string>
+    <string name="title_activity_detail_notifikasi">DetailNotifikasiActivity</string>
 </resources>

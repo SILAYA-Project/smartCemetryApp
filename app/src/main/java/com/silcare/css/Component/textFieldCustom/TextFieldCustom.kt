@@ -30,6 +30,7 @@ import com.silcare.css.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldCustom(
+    modifier: Modifier = Modifier,
     value: String,
     title: String,
     placeholder: String = "",
@@ -39,19 +40,18 @@ fun TextFieldCustom(
     onValueChange: (String) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
-    val borderColor = if (isError) colors.error else Color(0xFFEEDDFF)
+    val borderColor = if (isError) colors.error else Color(0x6138008b)
 
     Box(
         contentAlignment = Alignment.CenterStart
     ) {
         TextField(
-            modifier = Modifier
+            modifier = modifier
                 .border(
                     width = 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(5.dp)
-                )
-                .fillMaxWidth(),
+                ).fillMaxWidth(),
             isError = isError,
             value = value,
             onValueChange = { onValueChange(it) },
@@ -102,7 +102,7 @@ fun CompCustomTextField(
                 color = backgroundColor,
                 shape = RoundedCornerShape(5.dp)
             )
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+            .padding(horizontal = 10.dp),
         text = title,
         fontSize = 15.sp,
 //        color = textColor,
