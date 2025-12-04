@@ -65,7 +65,8 @@ fun DatabasePage(viewModel: MakamViewModel = viewModel()) {
                         onClick = {},
                         onValueChange = {},
                         value = "",
-                        imgUrl = imgUrl.value
+                        imgUrl = imgUrl.value,
+                        onClickFilter = {}
                     )
                     Spacer(modifier = Modifier.padding(5.dp))
                     LazyColumn {

@@ -95,7 +95,8 @@ fun LoginPage(navController: NavController , viewModel: MakamViewModel,) {
                         trailingIcon = {
 
                         },
-                        onValueChange = {password = it}
+                        onValueChange = {password = it},
+                        usePasswordToggle = true
                     )
                     Spacer(modifier = Modifier.size(10.dp))
                     Row(
@@ -110,7 +111,7 @@ fun LoginPage(navController: NavController , viewModel: MakamViewModel,) {
                                     navController.navigate("registrasi")
                                 },
                                 text = " Registrasi",
-                                color = Color(0xFF002FFF),
+                                color = Color(0xFF203086),
                                 fontSize = 12.sp
                             )
                         }

@@ -1,6 +1,7 @@
 package com.silcare.css.page
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -77,6 +78,7 @@ fun PageAddBlock(
                 ),
                 onClick = {
                     val kapasitasInt = kapasitas.toIntOrNull() ?: 0
+                    Log.d( "PageAddBlock kapasitas : ", kapasitas)
                     if (namaBlok.isNotBlank() && kapasitasInt > 0) {
                         viewModel.tambahBlokMakam(namaBlok, kapasitasInt) { success ->
                             if (success) {

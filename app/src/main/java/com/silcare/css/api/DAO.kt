@@ -5,14 +5,19 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.util.Patterns
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.google.firebase.Timestamp
+import com.google.firebase.app
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -89,58 +94,161 @@ class MakamViewModel : ViewModel() {
                 onError("Gagal ambil data: ${e.message}")
             }
     }
-    fun updateUserProfile(
-        userId: String,
-        username: String,
-        profil: String,
-        title: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
+
+//    fun updateUserProfile(
+//        userId: String,
+//        username: String,
+//        profil: String,
+//        title: String,
+//        onSuccess: () -> Unit,
+//        onError: (String) -> Unit
+//    ) {
+//        val data = mapOf(
+//            "username" to username,
+//            "profil" to profil,
+//            "title" to title
+//        )
+//
+//        FirebaseFirestore.getInstance()
+//            .collection("users")
+//            .document(userId)
+//            .update(data)
+//            .addOnSuccessListener { onSuccess() }
+//            .addOnFailureListener { onError(it.message ?: "Gagal memperbarui profil") }
+//    }
+
+    fun updateUserToFirestore(
+        uid: String,
+        nama: String,
+        email: String,
+        akses: String,
+        foto: String?,
+        onDone: () -> Unit,
+        onError:(String) -> Unit
     ) {
-        val data = mapOf(
-            "username" to username,
-            "profil" to profil,
-            "title" to title
+        val data = mutableMapOf<String, Any>(
+            "nama" to nama,
+            "email" to email,
+            "akses" to akses
         )
 
+        if (foto != null) {
+            data["profil"] = foto
+        }
+
         FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(userId)
+            .collection("user")
+            .document(uid)
             .update(data)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onError(it.message ?: "Gagal memperbarui profil") }
+            .addOnSuccessListener { onDone() }
+            .addOnFailureListener { err ->
+                Log.e("UPDATE_PROFILE", "Gagal update: ${err.message}")
+                onError(err.message ?: "Terjadi kesalahan saat update profile")
+            }
     }
+
+
+
 
     fun login(
         context: Context,
-        email: String,
-        password: String,
+        email: String?,
+        password: String?,
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        auth.signInWithEmailAndPassword(email, password)
+
+        if (email.isNullOrBlank()) {
+            onError("Email tidak boleh kosong.")
+            return
+        }
+
+        val cleanEmail = email.trim()
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches()) {
+            onError("Format email tidak valid.")
+            return
+        }
+
+        if (password.isNullOrBlank()) {
+            onError("Password tidak boleh kosong.")
+            return
+        }
+
+        auth.signInWithEmailAndPassword(cleanEmail, password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid
-                    if (uid != null) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            AuthPreferences(context).setLoggedIn(true)
-                            UserPreferences(context).saveUid(uid)
+                try {
+                    if (task.isSuccessful) {
+                        val uid = auth.currentUser?.uid
+                        if (uid == null) {
+                            onError("Gagal mendapatkan UID pengguna.")
+                            return@addOnCompleteListener
                         }
-                        Log.d("Login", "Login sukses UID: $uid")
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                AuthPreferences(context).setLoggedIn(true)
+                                UserPreferences(context).saveUid(uid)
+                            } catch (e: Exception) {
+                                Log.e("LoginPrefError", e.message.toString())
+                            }
+                        }
+
+                        onSuccess()
+
+                    } else {
+                        val e = task.exception
+                        val msg = when (e) {
+                            is FirebaseAuthInvalidCredentialsException -> "Email atau password salah."
+                            is FirebaseAuthInvalidUserException -> "Akun tidak ditemukan."
+                            else -> e?.localizedMessage ?: "Login gagal. Coba lagi."
+                        }
+                        onError(msg)
                     }
-                    onSuccess()
-                } else {
-                    val errorMessage = when (val exception = task.exception) {
-                        is FirebaseAuthInvalidCredentialsException -> "Password salah. Silakan coba lagi."
-                        is FirebaseAuthInvalidUserException -> "Email tidak terdaftar."
-                        else -> exception?.localizedMessage ?: "Login gagal. Silakan coba lagi nanti."
-                    }
-                    Log.e("LoginError", errorMessage)
-                    onError(errorMessage)
+                } catch (e: Exception) {
+                    onError("Terjadi kesalahan: ${e.message}")
                 }
             }
+            .addOnFailureListener { e ->
+                onError("Login gagal: ${e.message}")
+            }
     }
+
+
+
+
+
+//    fun login(
+//        context: Context,
+//        email: String,
+//        password: String,
+//        onSuccess: () -> Unit,
+//        onError: (String) -> Unit
+//    ) {
+//        auth.signInWithEmailAndPassword(email, password)
+//            .addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val uid = FirebaseAuth.getInstance().currentUser?.uid
+//                    if (uid != null) {
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            AuthPreferences(context).setLoggedIn(true)
+//                            UserPreferences(context).saveUid(uid)
+//                        }
+//                        Log.d("Login", "Login sukses UID: $uid")
+//                    }
+//                    onSuccess()
+//                } else {
+//                    val errorMessage = when (val exception = task.exception) {
+//                        is FirebaseAuthInvalidCredentialsException -> "Password salah. Silakan coba lagi."
+//                        is FirebaseAuthInvalidUserException -> "Email tidak terdaftar."
+//                        else -> exception?.localizedMessage
+//                            ?: "Login gagal. Silakan coba lagi nanti."
+//                    }
+//                    Log.e("LoginError", errorMessage)
+//                    onError(errorMessage)
+//                }
+//            }
+//    }
 
     fun register(
         context: Context,
@@ -256,14 +364,24 @@ class MakamViewModel : ViewModel() {
                                             .document(doc.id)
                                             .update("isi", FieldValue.increment(1))
                                             .addOnSuccessListener {
-                                                Log.d("MakamViewModel", "✅ totalIsi blok ${notifikasi.blok_makam} berhasil ditambah 1")
+                                                Log.d(
+                                                    "MakamViewModel",
+                                                    "✅ totalIsi blok ${notifikasi.blok_makam} berhasil ditambah 1"
+                                                )
                                             }
                                             .addOnFailureListener { e ->
-                                                Log.e("MakamViewModel", "❌ Gagal update totalIsi blok ${notifikasi.blok_makam}", e)
+                                                Log.e(
+                                                    "MakamViewModel",
+                                                    "❌ Gagal update totalIsi blok ${notifikasi.blok_makam}",
+                                                    e
+                                                )
                                             }
                                     }
                                 } else {
-                                    Log.e("MakamViewModel", "❌ Tidak ditemukan blok makam dengan nama ${notifikasi.blok_makam}")
+                                    Log.e(
+                                        "MakamViewModel",
+                                        "❌ Tidak ditemukan blok makam dengan nama ${notifikasi.blok_makam}"
+                                    )
                                 }
                             }
                             .addOnFailureListener { e ->
@@ -417,22 +535,83 @@ class MakamViewModel : ViewModel() {
         fetchIdMakamByBlokOnce(idBlok) { list ->
             val filteredList = list.filter { !it.status }
             _idMakamList.value = filteredList
-        Log.e("fetchIdMakamByBlok 1: ", filteredList.toString())
+            Log.e("fetchIdMakamByBlok 1: ", filteredList.toString())
         }
         Log.e("fetchIdMakamByBlok 2: ", idBlok)
         Log.e("fetchIdMakamByBlok 3: ", _idMakamList.value.toString())
     }
 
+//    fun fetchIdMakamByBlokOnce(
+//        idBlok: String,
+//        onResult: (List<IdMakam>) -> Unit
+//    ) {
+//        db.collection("blok makam")
+//            .document(idBlok)
+//            .collection("id makam")
+//            .get()
+//            .addOnSuccessListener { makamSnapshot ->
+//                val makamList = makamSnapshot.documents.map { doc ->
+//                    IdMakam(
+//                        id = doc.id,
+//                        code_makam = doc.getString("code_makam") ?: "",
+//                        status = doc.getBoolean("status") ?: false
+//                    )
+//                }
+//
+//                if (makamList.isEmpty()) {
+//                    onResult(emptyList())
+//                    return@addOnSuccessListener
+//                }
+//
+//                db.collection("blok makam").document(idBlok)
+//                    .get()
+//                    .addOnSuccessListener { blokDoc ->
+//                        val namaBlok = blokDoc.getString("nama_blok") ?: ""
+//                        val makamCodes = makamList.map { it.code_makam }.filter { it.isNotEmpty() }
+//
+//                        if (makamCodes.isEmpty()) {
+//                            onResult(makamList.map { it.copy(nama_blok = namaBlok) })
+//                            return@addOnSuccessListener
+//                        }
+//
+//                        db.collection("mayat")
+//                            .whereIn("id_makam", makamCodes)
+//                            .get()
+//                            .addOnSuccessListener { mayatSnapshot ->
+//                                val mayatMap = mayatSnapshot.documents.associate { doc ->
+//                                    val idMakam = doc.get("id_makam")?.toString() ?: ""
+//                                    val namaMayat = doc.getString("nama_mayat") ?: ""
+//                                    idMakam to namaMayat
+//                                }
+//
+//                                val finalList = makamList.map { makam ->
+//                                    makam.copy(
+//                                        nama_blok = namaBlok,
+//                                        namaAlmarhum = mayatMap[makam.code_makam] ?: ""
+//                                    )
+//                                }
+//                                onResult(finalList)
+//                            }
+//                    }
+//            }
+//    }
+
     fun fetchIdMakamByBlokOnce(
         idBlok: String,
         onResult: (List<IdMakam>) -> Unit
     ) {
+        Log.d("FETCH_MAKAM", "Mulai fetch blok: $idBlok")
+
         db.collection("blok makam")
             .document(idBlok)
             .collection("id makam")
             .get()
             .addOnSuccessListener { makamSnapshot ->
+                Log.d("FETCH_MAKAM", "Jumlah dokumen makam ditemukan: ${makamSnapshot.size()}")
+
                 val makamList = makamSnapshot.documents.map { doc ->
+                    Log.d("FETCH_MAKAM", "Doc makam ID=${doc.id}, code=${doc.getString("code_makam")}, status=${doc.getBoolean("status")}")
+
                     IdMakam(
                         id = doc.id,
                         code_makam = doc.getString("code_makam") ?: "",
@@ -441,6 +620,7 @@ class MakamViewModel : ViewModel() {
                 }
 
                 if (makamList.isEmpty()) {
+                    Log.w("FETCH_MAKAM", "List makam kosong")
                     onResult(emptyList())
                     return@addOnSuccessListener
                 }
@@ -449,20 +629,31 @@ class MakamViewModel : ViewModel() {
                     .get()
                     .addOnSuccessListener { blokDoc ->
                         val namaBlok = blokDoc.getString("nama_blok") ?: ""
+                        Log.d("FETCH_MAKAM", "Nama blok ditemukan: $namaBlok")
+
                         val makamCodes = makamList.map { it.code_makam }.filter { it.isNotEmpty() }
+                        Log.d("FETCH_MAKAM", "Kode makam: $makamCodes")
 
                         if (makamCodes.isEmpty()) {
+                            Log.w("FETCH_MAKAM", "Semua code_makam kosong!")
                             onResult(makamList.map { it.copy(nama_blok = namaBlok) })
                             return@addOnSuccessListener
                         }
 
+                        if (makamCodes.size > 10) {
+                            Log.e("FETCH_MAKAM", "ERROR! whereIn melebihi limit 10: jumlah = ${makamCodes.size}")
+                        }
+
                         db.collection("mayat")
-                            .whereIn("id_makam", makamCodes)
+                            .whereIn("id_makam", makamCodes.take(10))
                             .get()
                             .addOnSuccessListener { mayatSnapshot ->
+                                Log.d("FETCH_MAYAT", "Jumlah mayat ditemukan: ${mayatSnapshot.size()}")
+
                                 val mayatMap = mayatSnapshot.documents.associate { doc ->
                                     val idMakam = doc.get("id_makam")?.toString() ?: ""
                                     val namaMayat = doc.getString("nama_mayat") ?: ""
+                                    Log.d("FETCH_MAYAT", "Mayat: id_makam=$idMakam, nama=$namaMayat")
                                     idMakam to namaMayat
                                 }
 
@@ -470,17 +661,31 @@ class MakamViewModel : ViewModel() {
                                     makam.copy(
                                         nama_blok = namaBlok,
                                         namaAlmarhum = mayatMap[makam.code_makam] ?: ""
-                                    )
+                                    ).also {
+                                        Log.d("FETCH_RESULT", "Final: ${it.code_makam} - ${it.namaAlmarhum}")
+                                    }
                                 }
+
                                 onResult(finalList)
                             }
+                            .addOnFailureListener { error ->
+                                Log.e("FETCH_MAYAT", "Gagal fetch mayat: ${error.message}")
+                            }
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e("FETCH_BLOK", "Gagal fetch blok: ${error.message}")
                     }
             }
+            .addOnFailureListener { error ->
+                Log.e("FETCH_MAKAM", "Gagal fetch id makam: ${error.message}")
+            }
     }
+
 
     fun fetchDataMayat() {
         _isLoading.value = true
         db.collection("mayat")
+            .orderBy("tanggal_di_makamkan",Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot != null) {
@@ -574,23 +779,63 @@ class MakamViewModel : ViewModel() {
             }
     }
 
-    fun fetchDataBlokMakam() {
+    fun fetchDataBlokMakam(
+        searchName: String? = null,
+        filterType: String? = null
+    ) {
+        val keyword = searchName?.trim()?.lowercase()
+
         db.collection("blok makam")
             .get()
             .addOnSuccessListener { snapshot ->
+
                 if (snapshot != null) {
+
                     val list = snapshot.documents.mapNotNull { doc ->
                         val data = doc.toObject(BlokMakam::class.java)
-                        val dataWithId = data?.copy(id = doc.id)
-                        println("DOKUMEN: ${doc.data}")
-                        println("MODEL: $dataWithId")
-                        Log.d("get id document", "id = ${doc.id}")
-                        dataWithId
+                        data?.copy(id = doc.id)
                     }
-                    _blokMakamList.value = list
+
+                    val filteredList = if (!keyword.isNullOrEmpty()) {
+                        list.filter { item ->
+                            item.nama_blok?.lowercase()?.contains(keyword) == true
+                        }
+                    } else {
+                        list
+                    }
+
+                    val sortedList = when (filterType) {
+                        "az" -> filteredList.sortedBy { it.nama_blok?.lowercase() }
+                        "za" -> filteredList.sortedByDescending { it.nama_blok?.lowercase() }
+                        "max" -> filteredList.sortedByDescending { it.isi ?: 0 }
+                        "min" -> filteredList.sortedBy { it.isi ?: 0 }
+                        else -> filteredList
+                    }
+
+                    _blokMakamList.value = sortedList
                 }
             }
     }
+
+
+
+//    fun fetchDataBlokMakam() {
+//        db.collection("blok makam")
+//            .get()
+//            .addOnSuccessListener { snapshot ->
+//                if (snapshot != null) {
+//                    val list = snapshot.documents.mapNotNull { doc ->
+//                        val data = doc.toObject(BlokMakam::class.java)
+//                        val dataWithId = data?.copy(id = doc.id)
+//                        println("DOKUMEN: ${doc.data}")
+//                        println("MODEL: $dataWithId")
+//                        Log.d("get id document", "id = ${doc.id}")
+//                        dataWithId
+//                    }
+//                    _blokMakamList.value = list
+//                }
+//            }
+//    }
 
     fun fetchDataBerita() {
         viewModelScope.launch {
@@ -637,7 +882,8 @@ class UploadRepository {
     suspend fun uploadToCloudinary(context: Context, uri: Uri): String? {
         return withContext(Dispatchers.IO) {
             try {
-                val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
+                val inputStream =
+                    context.contentResolver.openInputStream(uri) ?: return@withContext null
                 val file = File.createTempFile("upload", ".jpg", context.cacheDir)
                 file.outputStream().use { inputStream.copyTo(it) }
 
@@ -647,7 +893,8 @@ class UploadRepository {
                 val uploadPreset = "unsigned_present"
                 val uploadPresetBody = uploadPreset.toRequestBody("text/plain".toMediaTypeOrNull())
 
-                val response = CloudinaryApiClient.apiService.uploadToCloudinary(multipart, uploadPresetBody)
+                val response =
+                    CloudinaryApiClient.apiService.uploadToCloudinary(multipart, uploadPresetBody)
                 if (response.isSuccessful) {
                     response.body()?.secure_url
                 } else {
@@ -706,7 +953,7 @@ object AjuanDataStore {
             data.rtm, data.rwm, data.rtw, data.rww,
             data.kelurahanm, data.kecamatanm, data.kelurahanw, data.kecamatanw,
             data.hubungan, data.agama, data.kewarganegaraan, data.nama_bapak, data.nama_ibu,
-            data.suami_atau_istri, data.anak,data.usia,data.nomor_kk,data.nomor_nik
+            data.suami_atau_istri, data.anak, data.usia, data.nomor_kk, data.nomor_nik
         )
 
 //        val numbersValid = data.usia > 0 && data.nomor_kk > 0 && data.nomor_nik > 0

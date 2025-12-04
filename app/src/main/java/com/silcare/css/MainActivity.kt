@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     100
                 )
             }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(Unit,showProfile) {
                 val user = FirebaseAuth.getInstance().currentUser
                 if (user != null) {
                     FirebaseFirestore.getInstance()
@@ -172,9 +172,6 @@ class MainActivity : ComponentActivity() {
                                 emailAwal = email ?: "-----",
                                 aksesAwal = akses ?: "-----",
                                 imgUrl = imgUrl ?: "",
-                                onSave = { nama, email, password ->
-
-                                },
                                 onDismiss = { showProfile = false },
                                 onLogout = {
                                     FirebaseAuth.getInstance().signOut()
@@ -238,19 +235,12 @@ class MainActivity : ComponentActivity() {
                                 emailAwal = email ?: "-----",
                                 aksesAwal = akses ?: "-----",
                                 imgUrl = imgUrl ?: "",
-                                onSave = { nama, email, password ->
-
-                                },
                                 onDismiss = { showProfile = false },
                                 onLogout = {
                                     FirebaseAuth.getInstance().signOut()
-                                    lifecycleScope.launch {
-                                        authPrefs.setLoggedIn(false)
-                                        authPrefs.setUserUid("")
-                                    }
                                     val intent = Intent(this, LoginAndRegisActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
+                                    this.startActivity(intent)
+                                    showProfile = false
                                 }
                             )
                         }

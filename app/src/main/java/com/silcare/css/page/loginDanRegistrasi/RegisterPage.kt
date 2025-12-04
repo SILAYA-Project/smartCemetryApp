@@ -98,6 +98,7 @@ fun RegisterPage(
                         value = password,
                         title = "Password",
                         isError = false,
+                        usePasswordToggle = true,
                         placeholder = "Masukan Password Anda",
                         trailingIcon = {
 
@@ -123,7 +124,9 @@ fun RegisterPage(
                                 color = Color(0x54000000),
                                 fontSize = 12.sp
                             )
-                            Text(
+                            Text(  modifier = Modifier.clickable {
+                                navController.popBackStack()
+                            },
                                 text = " Masuk",
                                 color = Color(0xFF002FFF),
                                 fontSize = 12.sp

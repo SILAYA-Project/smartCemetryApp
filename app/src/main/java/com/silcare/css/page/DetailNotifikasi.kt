@@ -4,14 +4,29 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.Timestamp
 import com.silcare.css.api.AdminNotifikasi
 import com.silcare.css.api.toFormattedString
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -39,75 +51,72 @@ fun DetailNotifikasi(data: AdminNotifikasi, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         DetailSection(title = "Status Data") {
-            BooleanRow("Status", data.status)
-            BooleanRow("Status Notifikasi", data.statusNotifikasi)
-            BooleanRow("Input Data", data.inputData)
-            BooleanRow("Foto KTP Perwakilan", data.fotoKtpPerwakilan)
-            BooleanRow("Foto KTP Almarhum", data.fotoKtp)
-            BooleanRow("Foto KK", data.fotoKk)
-            BooleanRow("Surat Kematian", data.suratKematian)
+            BooleanRow("Input Data ", data.inputData)
+            BooleanRow("Foto KTP Perwakilan ", data.fotoKtpPerwakilan)
+            BooleanRow("Foto KTP Almarhum ", data.fotoKtp)
+            BooleanRow("Foto KK ", data.fotoKk)
+            BooleanRow("Surat Kematian ", data.suratKematian)
         }
 
         DetailSection(title = "Data Almarhum") {
-            InfoRow("ID Mayat", data.id_mayat)
-            InfoRow("Nama", data.nama_mayat)
-            InfoRow("Usia", data.usia)
-            InfoRow("Jenis Kelamin", data.jenis_kelamin)
-            InfoRow("Tempat & Tanggal Lahir", data.tempat_dan_tanggal_lahir)
-            InfoRow("Tanggal Meninggal", data.tanggal_meninggal.toFormattedString())
-            InfoRow("Sebab", data.sebab)
-            InfoRow("Blok Makam", data.blok_makam)
-            InfoRow("ID Makam", data.id_makam)
-            InfoRow("Meninggal di", data.meninggal_di)
-            InfoRow("Wafat", data.wafat)
-            InfoRow("SKM", data.skm)
-            InfoRow("Nomor KK (Mayat)", data.nomor_kk)
+            InfoRow("Nama ", data.nama_mayat)
+            InfoRow("Usia ", data.usia)
+            InfoRow("Jenis Kelamin ", data.jenis_kelamin)
+            InfoRow("Tempat & Tanggal Lahir ", data.tempat_dan_tanggal_lahir)
+            InfoRow("Tanggal Meninggal ", data.tanggal_meninggal.toFormattedString())
+            InfoRow("Sebab ", data.sebab)
+            InfoRow("Blok Makam ", data.blok_makam)
+            InfoRow("ID Makam ", data.id_makam)
+            InfoRow("Meninggal di ", data.meninggal_di)
+            InfoRow("Wafat ", data.wafat)
+            InfoRow("SKM ", data.skm)
+            InfoRow("Nomor KK (Mayat) ", data.nomor_kk)
         }
 
         DetailSection(title = "Perwakilan & Kontak") {
-            InfoRow("Diwakilkan Oleh", data.di_wakilkan_oleh)
-            InfoRow("Hubungan", data.hubungan)
-            InfoRow("Nomor Telepon", data.nomor_telpon)
-            InfoRow("Email", data.email)
-            InfoRow("Nomor NIK (Perwakilan)", data.nomor_nik)
+            InfoRow("Diwakilkan Oleh ", data.di_wakilkan_oleh)
+            InfoRow("Hubungan ", data.hubungan)
+            InfoRow("Nomor Telepon ", data.nomor_telpon)
+            InfoRow("Email ", data.email)
+            InfoRow("Nomor NIK (Perwakilan) ", data.nomor_nik)
         }
 
         DetailSection(title = "Alamat Makam") {
-            InfoRow("Alamat", data.alamatm)
-            InfoRow("RT", data.rtm)
-            InfoRow("RW", data.rwm)
-            InfoRow("Kelurahan", data.kelurahanm)
-            InfoRow("Kecamatan", data.kecamatanm)
+            InfoRow("Alamat ", data.alamatm)
+            InfoRow("RT ", data.rtm)
+            InfoRow("RW ", data.rwm)
+            InfoRow("Kelurahan ", data.kelurahanm)
+            InfoRow("Kecamatan ", data.kecamatanm)
         }
 
         DetailSection(title = "Alamat Perwakilan") {
-            InfoRow("Alamat", data.alamatw)
-            InfoRow("RT", data.rtw)
-            InfoRow("RW", data.rww)
-            InfoRow("Kelurahan", data.kelurahanw)
-            InfoRow("Kecamatan", data.kecamatanw)
+            InfoRow("Alamat ", data.alamatw)
+            InfoRow("RT ", data.rtw)
+            InfoRow("RW ", data.rww)
+            InfoRow("Kelurahan ", data.kelurahanw)
+            InfoRow("Kecamatan ", data.kecamatanw)
         }
 
         DetailSection(title = "Data Keluarga") {
-            InfoRow("Agama", data.agama)
-            InfoRow("Kewarganegaraan", data.kewarganegaraan)
-            InfoRow("Nama Ayah", data.nama_bapak)
-            InfoRow("Nama Ibu", data.nama_ibu)
-            InfoRow("Suami/Istri", data.suami_atau_istri)
-            InfoRow("Anak", data.anak)
+            InfoRow("Agama ", data.agama)
+            InfoRow("Kewarganegaraan ", data.kewarganegaraan)
+            InfoRow("Nama Ayah ", data.nama_bapak)
+            InfoRow("Nama Ibu ", data.nama_ibu)
+            InfoRow("Suami/Istri ", data.suami_atau_istri)
+            InfoRow("Anak ", data.anak)
         }
 
         DetailSection(title = "Dokumen") {
-            ImagePreview("KTP Perwakilan", data.urlFotoKtpPerwakilan)
-            ImagePreview("KTP Almarhum", data.urlFotoKtp)
-            ImagePreview("KK", data.urlFotoKk)
-            ImagePreview("Surat Kematian", data.urlSuratKematian)
+            ImagePreview("KTP Perwakilan ", data.urlFotoKtpPerwakilan)
+            ImagePreview("KTP Almarhum ", data.urlFotoKtp)
+            ImagePreview("KK ", data.urlFotoKk)
+            ImagePreview("Surat Kematian ", data.urlSuratKematian)
         }
 
         DetailSection(title = "Waktu Proses") {
-            InfoRow("Tanggal Pengajuan", data.tanggal_pengajuan.toFormattedString())
-            InfoRow("Tanggal Konfirmasi", data.tanggal_konfirmasi.toFormattedString())
-            InfoRow("Tanggal Dimakamkan", data.tanggal_di_makamkan.toFormattedString())
+            InfoRow("Tanggal Pengajuan ", data.tanggal_pengajuan.toFormattedString())
+            InfoRow("Tanggal Konfirmasi ", data.tanggal_konfirmasi.toFormattedString())
+            InfoRow("Tanggal Dimakamkan ", data.tanggal_di_makamkan.toFormattedString())
         }
     }
 }
@@ -165,6 +174,7 @@ fun InfoRow(label: String, value: String?) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = label,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                 color = Color.Black

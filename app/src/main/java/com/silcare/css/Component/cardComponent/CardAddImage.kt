@@ -116,7 +116,7 @@ fun CardAddImage(
                     IconButton(
                         onClick = {
                             imageUri = null
-                            onImageSelected(null) // 👈 reset juga
+                            onImageSelected(null)
                         },
                         modifier = Modifier
                             .align(Alignment.TopEnd)

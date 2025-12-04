@@ -44,7 +44,8 @@ fun TopSearchBarFillter(
     value: String,
     onValueChange: (String) -> Unit,
     onClick: () -> Unit,
-    imgUrl: String
+    imgUrl: String,
+    onClickFilter: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val focusManager = LocalFocusManager.current
@@ -126,7 +127,9 @@ fun TopSearchBarFillter(
                                 Icon(
                                     painter = painterResource(id = R.drawable.filter),
                                     contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
+                                    modifier = Modifier.size(20.dp).clickable{
+                                        onClickFilter()
+                                    },
                                     tint = Color(0xff38008B),
                                 )
                             }
@@ -174,7 +177,8 @@ private fun TopSearchBarPrev() {
                 value = value,
                 onValueChange = { value = it },
                 onClick = {},
-                imgUrl = ""
+                imgUrl = "",
+                onClickFilter = {}
             )
         }
     )

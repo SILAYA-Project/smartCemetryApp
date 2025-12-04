@@ -52,7 +52,11 @@ import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadRepository: UploadRepository = UploadRepository()) {
+fun Ajuan3Page(
+    navController: NavController,
+    data: AdminNotifikasi,
+    uploadRepository: UploadRepository = UploadRepository()
+) {
     val viewModel: MakamViewModel = viewModel()
     val blokList by viewModel.blokMakamList.collectAsState()
     val idMakamList by viewModel.idMakamList.collectAsState()
@@ -63,6 +67,7 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadReposito
     var ktpAhliWarisUri by remember { mutableStateOf<Uri?>(null) }
     var ktpAlmarhumUri by remember { mutableStateOf<Uri?>(null) }
     var skkUri by remember { mutableStateOf<Uri?>(null) }
+    var metoPem by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         println("Total data tersimpan: ${dataList.size}")
@@ -142,8 +147,8 @@ fun Ajuan3Page(navController: NavController,data: AdminNotifikasi,uploadReposito
                 title = "Metode Pembayaran",
                 modifier = Modifier.fillMaxWidth(),
                 pilihan = listOf("Transfer Bank", "Tunai"),
-                value = "",
-                onValueChange = {}
+                value = metoPem,
+                onValueChange = {metoPem = it}
             )
             Spacer(modifier = Modifier.padding(20.dp))
             Row(

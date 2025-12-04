@@ -81,7 +81,7 @@ fun NoMakamPage(
                 contentDescription = null,
                 tint = Color(0xFF38008B)
             )
-            TopSearchBarFillter(onValueChange = {}, onClick = {}, value = "", imgUrl = imgUrl.value)
+            TopSearchBarFillter(onValueChange = {}, onClick = {}, value = "", imgUrl = imgUrl.value, onClickFilter = {})
         }
 
         Row(

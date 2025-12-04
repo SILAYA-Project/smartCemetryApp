@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,11 +38,39 @@ fun TextFieldCustom(
     placeholder: String = "",
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: @Composable (() -> Unit)? = null,
+    usePasswordToggle: Boolean = false,
     isError: Boolean,
     onValueChange: (String) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
     val borderColor = if (isError) colors.error else Color(0x6138008b)
+    val passwordVisible = remember { mutableStateOf(false) }
+
+    val finalVisualTransformation =
+        if (usePasswordToggle) {
+            if (passwordVisible.value) VisualTransformation.None
+            else PasswordVisualTransformation()
+        } else visualTransformation
+
+
+    val finalTrailingIcon: @Composable (() -> Unit)? =
+        if (usePasswordToggle) {
+            {
+                Icon(
+                    modifier = Modifier
+                        .clickable { passwordVisible.value = !passwordVisible.value }
+                        .size(20.dp),
+                    painter = painterResource(
+                        if (passwordVisible.value)
+                            R.drawable.iconvisibel
+                        else
+                            R.drawable.icondesable
+                    ),
+                    contentDescription = "",
+                    tint = Color(0xFF38008B)
+                )
+            }
+        } else trailingIcon
 
     Box(
         contentAlignment = Alignment.CenterStart
@@ -51,7 +81,8 @@ fun TextFieldCustom(
                     width = 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(5.dp)
-                ).fillMaxWidth(),
+                )
+                .fillMaxWidth(),
             isError = isError,
             value = value,
             onValueChange = { onValueChange(it) },
@@ -71,18 +102,16 @@ fun TextFieldCustom(
                 Text(
                     text = placeholder,
                     color = Color(0xFFB8B8B8),
-//                    fontSize = 10.sp
                 )
             },
-            visualTransformation = visualTransformation,
-            trailingIcon = trailingIcon,
+            visualTransformation = finalVisualTransformation,
+            trailingIcon = finalTrailingIcon,
             singleLine = true
         )
 
         CompCustomTextField(
             title = title,
             modifier = Modifier.offset(x = 10.dp, y = (-25).dp),
-//            backgroundColor = colors.background,
             backgroundColor = Color.White,
             textColor = borderColor
         )
