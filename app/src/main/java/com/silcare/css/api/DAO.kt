@@ -95,28 +95,6 @@ class MakamViewModel : ViewModel() {
             }
     }
 
-//    fun updateUserProfile(
-//        userId: String,
-//        username: String,
-//        profil: String,
-//        title: String,
-//        onSuccess: () -> Unit,
-//        onError: (String) -> Unit
-//    ) {
-//        val data = mapOf(
-//            "username" to username,
-//            "profil" to profil,
-//            "title" to title
-//        )
-//
-//        FirebaseFirestore.getInstance()
-//            .collection("users")
-//            .document(userId)
-//            .update(data)
-//            .addOnSuccessListener { onSuccess() }
-//            .addOnFailureListener { onError(it.message ?: "Gagal memperbarui profil") }
-//    }
-
     fun updateUserToFirestore(
         uid: String,
         nama: String,
@@ -213,42 +191,6 @@ class MakamViewModel : ViewModel() {
                 onError("Login gagal: ${e.message}")
             }
     }
-
-
-
-
-
-//    fun login(
-//        context: Context,
-//        email: String,
-//        password: String,
-//        onSuccess: () -> Unit,
-//        onError: (String) -> Unit
-//    ) {
-//        auth.signInWithEmailAndPassword(email, password)
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    val uid = FirebaseAuth.getInstance().currentUser?.uid
-//                    if (uid != null) {
-//                        CoroutineScope(Dispatchers.IO).launch {
-//                            AuthPreferences(context).setLoggedIn(true)
-//                            UserPreferences(context).saveUid(uid)
-//                        }
-//                        Log.d("Login", "Login sukses UID: $uid")
-//                    }
-//                    onSuccess()
-//                } else {
-//                    val errorMessage = when (val exception = task.exception) {
-//                        is FirebaseAuthInvalidCredentialsException -> "Password salah. Silakan coba lagi."
-//                        is FirebaseAuthInvalidUserException -> "Email tidak terdaftar."
-//                        else -> exception?.localizedMessage
-//                            ?: "Login gagal. Silakan coba lagi nanti."
-//                    }
-//                    Log.e("LoginError", errorMessage)
-//                    onError(errorMessage)
-//                }
-//            }
-//    }
 
     fun register(
         context: Context,
@@ -541,61 +483,6 @@ class MakamViewModel : ViewModel() {
         Log.e("fetchIdMakamByBlok 3: ", _idMakamList.value.toString())
     }
 
-//    fun fetchIdMakamByBlokOnce(
-//        idBlok: String,
-//        onResult: (List<IdMakam>) -> Unit
-//    ) {
-//        db.collection("blok makam")
-//            .document(idBlok)
-//            .collection("id makam")
-//            .get()
-//            .addOnSuccessListener { makamSnapshot ->
-//                val makamList = makamSnapshot.documents.map { doc ->
-//                    IdMakam(
-//                        id = doc.id,
-//                        code_makam = doc.getString("code_makam") ?: "",
-//                        status = doc.getBoolean("status") ?: false
-//                    )
-//                }
-//
-//                if (makamList.isEmpty()) {
-//                    onResult(emptyList())
-//                    return@addOnSuccessListener
-//                }
-//
-//                db.collection("blok makam").document(idBlok)
-//                    .get()
-//                    .addOnSuccessListener { blokDoc ->
-//                        val namaBlok = blokDoc.getString("nama_blok") ?: ""
-//                        val makamCodes = makamList.map { it.code_makam }.filter { it.isNotEmpty() }
-//
-//                        if (makamCodes.isEmpty()) {
-//                            onResult(makamList.map { it.copy(nama_blok = namaBlok) })
-//                            return@addOnSuccessListener
-//                        }
-//
-//                        db.collection("mayat")
-//                            .whereIn("id_makam", makamCodes)
-//                            .get()
-//                            .addOnSuccessListener { mayatSnapshot ->
-//                                val mayatMap = mayatSnapshot.documents.associate { doc ->
-//                                    val idMakam = doc.get("id_makam")?.toString() ?: ""
-//                                    val namaMayat = doc.getString("nama_mayat") ?: ""
-//                                    idMakam to namaMayat
-//                                }
-//
-//                                val finalList = makamList.map { makam ->
-//                                    makam.copy(
-//                                        nama_blok = namaBlok,
-//                                        namaAlmarhum = mayatMap[makam.code_makam] ?: ""
-//                                    )
-//                                }
-//                                onResult(finalList)
-//                            }
-//                    }
-//            }
-//    }
-
     fun fetchIdMakamByBlokOnce(
         idBlok: String,
         onResult: (List<IdMakam>) -> Unit
@@ -682,7 +569,8 @@ class MakamViewModel : ViewModel() {
     }
 
 
-    fun fetchDataMayat() {
+    fun fetchDataMayat(searchName: String? = null, filter: String? = null) {
+        val keyword = searchName?.trim()?.lowercase()
         _isLoading.value = true
         db.collection("mayat")
             .orderBy("tanggal_di_makamkan",Query.Direction.DESCENDING)
@@ -727,7 +615,24 @@ class MakamViewModel : ViewModel() {
                             email = doc.getString("email") ?: "-----"
                         )
                     }
-                    _mayatList.value = list
+
+                    val filteredList = if (!keyword.isNullOrEmpty()) {
+                        list.filter { item ->
+                            item.nama_mayat?.lowercase()?.contains(keyword) == true
+                            item.di_wakilkan_oleh?.lowercase()?.contains(keyword) == true
+                        }
+                    } else {
+                        list
+                    }
+
+                    val sortedList = when (filter) {
+                        "az" -> filteredList.sortedBy { it.nama_mayat?.lowercase() }
+                        "za" -> filteredList.sortedByDescending { it.nama_mayat?.lowercase() }
+                        "max" -> filteredList.sortedByDescending { it.tanggal_meninggal }
+                        "min" -> filteredList.sortedBy { it.tanggal_di_makamkan }
+                        else -> filteredList
+                    }
+                    _mayatList.value = sortedList
                 }
                 _isLoading.value = false
             }
@@ -816,26 +721,6 @@ class MakamViewModel : ViewModel() {
                 }
             }
     }
-
-
-
-//    fun fetchDataBlokMakam() {
-//        db.collection("blok makam")
-//            .get()
-//            .addOnSuccessListener { snapshot ->
-//                if (snapshot != null) {
-//                    val list = snapshot.documents.mapNotNull { doc ->
-//                        val data = doc.toObject(BlokMakam::class.java)
-//                        val dataWithId = data?.copy(id = doc.id)
-//                        println("DOKUMEN: ${doc.data}")
-//                        println("MODEL: $dataWithId")
-//                        Log.d("get id document", "id = ${doc.id}")
-//                        dataWithId
-//                    }
-//                    _blokMakamList.value = list
-//                }
-//            }
-//    }
 
     fun fetchDataBerita() {
         viewModelScope.launch {
