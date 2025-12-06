@@ -12,9 +12,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +52,8 @@ import com.silcare.css.api.UserPreferences
 fun NoMakamPage(
     viewModel: MakamViewModel,
     blokId: String,
-    navController: NavController
+    navController: NavController,
+    onProfile: () -> Unit
 ) {
     var idMakamList by remember { mutableStateOf<List<IdMakam>>(emptyList()) }
     val context = LocalContext.current
@@ -55,8 +64,8 @@ fun NoMakamPage(
     var filter by remember { mutableStateOf("") }
     var isFilterMenuOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(blokId) {
-        viewModel.fetchIdMakamByBlokOnce(blokId) { list ->
+    LaunchedEffect(blokId,search, filter) {
+        viewModel.fetchIdMakamByBlokOnce(blokId, search, filter) { list ->
             idMakamList = list
         }
     }
@@ -86,12 +95,100 @@ fun NoMakamPage(
                 tint = Color(0xFF38008B)
             )
             TopSearchBarFillter(
-                onValueChange = {},
-                onClick = {},
-                value = "",
+                onClick = { onProfile() },
+                value = search,
+                onValueChange = { search = it },
                 imgUrl = imgUrl.value,
-                onClickFilter = {}
+                onClickFilter = { isFilterMenuOpen = true }
             )
+
+            DropdownMenu(
+                expanded = isFilterMenuOpen,
+                onDismissRequest = { isFilterMenuOpen = false },
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(16.dp),
+                        clip = false
+                    )
+                    .padding(vertical = 4.dp)
+            ) {
+                DropdownMenu(
+                    expanded = isFilterMenuOpen,
+                    onDismissRequest = { isFilterMenuOpen = false }) {
+                    DropdownMenuItem(
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (filter == "az") {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = "checked",
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                }
+                                Text("Nama A → Z")
+                            }
+                        },
+                        onClick = {
+                            filter = "az"
+                            isFilterMenuOpen = false
+                        }
+                    )
+                    DropdownMenuItem(text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (filter == "za") {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "checked",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Text("Nama Z → A")
+                        }
+                    }, onClick = {
+                        filter = "za"
+                        isFilterMenuOpen = false
+                    })
+                    DropdownMenuItem(text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (filter == "terisi") {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "checked",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Text("Terisi")
+                        }
+                    }, onClick = {
+                        filter = "terisi"
+                        isFilterMenuOpen = false
+                    })
+                    DropdownMenuItem(text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (filter == "tersedia") {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "checked",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Text("tersedia")
+                        }
+                    }, onClick = {
+                        filter = "tersedia"
+                        isFilterMenuOpen = false
+                    })
+                }
+            }
         }
 
         Row(
@@ -99,7 +196,10 @@ fun NoMakamPage(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(modifier = Modifier.padding(start = 5.dp), text = "Nomor Blok ・ ${idMakamList.size}")
+            Text(
+                modifier = Modifier.padding(start = 5.dp),
+                text = "Nomor Blok ・ ${idMakamList.size}"
+            )
             Text(modifier = Modifier.padding(end = 20.dp), text = "Lokasi")
         }
 
@@ -107,6 +207,7 @@ fun NoMakamPage(
 
         LazyColumn {
             items(idMakamList) { makam ->
+                Log.d("NoMakamPage: ", idMakamList.size.toString())
                 CardNoMayat(data = makam)
                 Spacer(modifier = Modifier.padding(5.dp))
             }
@@ -121,6 +222,7 @@ private fun NoMakamPagePrev() {
     NoMakamPage(
         viewModel = MakamViewModel(),
         blokId = "1",
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        onProfile = {}
     )
 }

@@ -2,13 +2,17 @@ package com.silcare.css.page
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,11 +22,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,13 +41,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material.FractionalThreshold
+import androidx.wear.compose.material.rememberSwipeableState
+import androidx.wear.compose.material.swipeable
 import com.silcare.css.Component.cardComponent.CardDataMayat
 import com.silcare.css.Component.cardComponent.CardDataMayatShimmer
 import com.silcare.css.Component.top_app_bar.TopSearchBarFillter
+import com.silcare.css.api.AdminNotifikasi
 import com.silcare.css.api.MakamViewModel
 import com.silcare.css.api.Mayat
 import com.silcare.css.api.UserPreferences
@@ -64,6 +78,7 @@ fun DatabasePage(
     LaunchedEffect(Unit,search,filter) {
         viewModel.fetchDataMayat(search, filter)
     }
+
     viewModel.getUserData(
         uid = uid,
         onSuccess = { userData ->
@@ -201,7 +216,9 @@ fun DatabasePage(
 @Preview(showBackground = true)
 @Composable
 private fun DatabasePagePrev() {
-    DatabasePage(
-        onProfile = {}
-    )
+//    DatabasePage(
+//        onProfile = {},
+//        viewModel = Mayat,
+//        onDetail = {}
+//    )
 }
