@@ -110,9 +110,23 @@ fun LoginPage(navController: NavController , viewModel: MakamViewModel,) {
                                 modifier = Modifier.clickable {
                                     navController.navigate("registrasi")
                                 },
-                                text = " Registrasi",
+                                text = " Registrasi ",
                                 color = Color(0xFF203086),
                                 fontSize = 12.sp
+                            )
+                            Text(
+                                text = "Masuk sebagai ",
+                                color = Color(0x54000000),
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                modifier = Modifier.clickable {
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    context.startActivity(intent)
+                                },
+                                color = Color(0xFF203086),
+                                fontSize = 12.sp,
+                                text = "Tamu"
                             )
                         }
                     )

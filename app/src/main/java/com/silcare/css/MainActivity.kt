@@ -25,7 +25,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -45,20 +42,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.silcare.css.Component.FloatingActionButton.FloatingActionButtonCustom
 import com.silcare.css.Component.bottomAppBar.BottomBarMain
 import com.silcare.css.Component.bottomAppBar.BottomBarUserMain
+import com.silcare.css.PopUp.AlertToLogin
 import com.silcare.css.api.MakamViewModel
 import com.silcare.css.page.BeritaPage
 import com.silcare.css.page.DatabasePage
-import com.silcare.css.page.DetailNotifikasi
 import com.silcare.css.page.HomePage
 import com.silcare.css.page.NoMakamPage
 import com.silcare.css.page.PageAddBlock
 import com.silcare.css.page.PageNotifikasi
-import com.silcare.css.page.berita.PostingBerita
 import com.silcare.css.page.ProfileDialog
 import com.silcare.css.page.berita.UploadBeritaActivity
 import com.silcare.css.page.loginDanRegistrasi.LoginAndRegisActivity
 import com.silcare.css.page.pageAjuan.AjuanActivity
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var authPrefs: AuthPreferences
@@ -84,6 +79,7 @@ class MainActivity : ComponentActivity() {
             var email by remember { mutableStateOf<String?>(null) }
             var imgUrl by remember { mutableStateOf<String?>(null) }
             var showProfile by remember { mutableStateOf(false) }
+            var mustLogin by remember { mutableStateOf(false) }
             var direction by remember { mutableStateOf(0) }
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -95,7 +91,7 @@ class MainActivity : ComponentActivity() {
                     100
                 )
             }
-            LaunchedEffect(Unit,showProfile) {
+            LaunchedEffect(Unit, showProfile) {
                 val user = FirebaseAuth.getInstance().currentUser
                 if (user != null) {
                     FirebaseFirestore.getInstance()
@@ -133,13 +129,28 @@ class MainActivity : ComponentActivity() {
                                 HomePage(
                                     navController = navController,
                                     uid = FirebaseAuth.getInstance().currentUser?.uid,
-                                    onProfile = { showProfile = true })
+                                    onProfile = {
+                                        Log.d(
+                                            "get UID TRUE or FALSE",
+                                            ((FirebaseAuth.getInstance().currentUser?.uid != null).toString())
+                                        )
+                                        if (FirebaseAuth.getInstance().currentUser?.uid != null) {
+                                            showProfile = true
+                                        } else {
+                                            mustLogin = true
+                                        }
+                                    }
+                                )
                             }
                             composable(
                                 "database",
                                 enterTransition = { slideInHorizontally { full -> full * direction } },
                                 exitTransition = { slideOutHorizontally { full -> -full * direction } }
-                            ) { DatabasePage() }
+                            ) {
+                                DatabasePage(
+                                    onProfile = { showProfile = true }
+                                )
+                            }
                             composable(
                                 "notifikasi",
                                 enterTransition = { slideInHorizontally { full -> full * direction } },
@@ -149,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                 "noMakamPage/{id}",
                                 enterTransition = { slideInHorizontally { full -> full * direction } },
                                 exitTransition = { slideOutHorizontally { full -> -full * direction } }
-                                ) { backStackEntry ->
+                            ) { backStackEntry ->
                                 val id = backStackEntry.arguments?.getString("id") ?: "-----"
                                 NoMakamPage(
                                     blokId = id,
@@ -178,6 +189,15 @@ class MainActivity : ComponentActivity() {
                                     val intent = Intent(this, LoginAndRegisActivity::class.java)
                                     this.startActivity(intent)
                                     showProfile = false
+                                }
+                            )
+                        }
+                        if (mustLogin) {
+                            AlertToLogin(
+                                onClick = {
+                                    val intent = Intent(this, LoginAndRegisActivity::class.java)
+                                    this.startActivity(intent)
+                                    mustLogin = false
                                 }
                             )
                         }
@@ -217,7 +237,18 @@ class MainActivity : ComponentActivity() {
                                 HomePage(
                                     navController = navController,
                                     uid = FirebaseAuth.getInstance().currentUser?.uid,
-                                    onProfile = { showProfile = true })
+                                    onProfile = {
+                                        Log.d(
+                                            "get UID TRUE or FALSE",
+                                            ((FirebaseAuth.getInstance().currentUser?.uid != null).toString())
+                                        )
+                                        if (FirebaseAuth.getInstance().currentUser?.uid != null) {
+                                            showProfile = true
+                                        } else {
+                                            mustLogin = true
+                                        }
+                                    }
+                                )
                             }
                             composable("berita") { BeritaPage() }
                             composable("noMakamPage/{id}") { backStackEntry ->
@@ -244,6 +275,18 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                        if (mustLogin) {
+                            AlertToLogin(
+                                onDismis = {
+                                    mustLogin = false
+                                },
+                                onClick = {
+                                    val intent = Intent(this, LoginAndRegisActivity::class.java)
+                                    this.startActivity(intent)
+                                    mustLogin = false
+                                }
+                            )
+                        }
                     },
                     bottomBar = {
                         BottomBarUserMain(
@@ -253,8 +296,12 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                                val intent = Intent(this, AjuanActivity::class.java)
-                                this.startActivity(intent)
+                                if (FirebaseAuth.getInstance().currentUser?.uid != null) {
+                                    val intent = Intent(this, AjuanActivity::class.java)
+                                    this.startActivity(intent)
+                                } else {
+                                    mustLogin = true
+                                }
                             },
                             shape = CircleShape,
                             containerColor = Color(0xFFF3EDF7),

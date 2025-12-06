@@ -293,9 +293,6 @@ fun ProfileImagePicker(
         }
     }
 
-    // =======================
-    //   DIALOG PILIH SUMBER
-    // =======================
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },

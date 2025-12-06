@@ -51,6 +51,10 @@ fun NoMakamPage(
     val imgUrl = remember { mutableStateOf("") }
     val uidFlow = remember { UserPreferences(context).uid }
     val uid by uidFlow.collectAsState(initial = null)
+    var search by remember { mutableStateOf("") }
+    var filter by remember { mutableStateOf("") }
+    var isFilterMenuOpen by remember { mutableStateOf(false) }
+
     LaunchedEffect(blokId) {
         viewModel.fetchIdMakamByBlokOnce(blokId) { list ->
             idMakamList = list
@@ -81,7 +85,13 @@ fun NoMakamPage(
                 contentDescription = null,
                 tint = Color(0xFF38008B)
             )
-            TopSearchBarFillter(onValueChange = {}, onClick = {}, value = "", imgUrl = imgUrl.value, onClickFilter = {})
+            TopSearchBarFillter(
+                onValueChange = {},
+                onClick = {},
+                value = "",
+                imgUrl = imgUrl.value,
+                onClickFilter = {}
+            )
         }
 
         Row(
