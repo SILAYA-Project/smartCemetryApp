@@ -37,6 +37,7 @@ data class AdminNotifikasi(
     val urlFotoKtp: String = "",
     val urlFotoKk: String = "",
     val urlSuratKematian: String = "",
+    val urlBuktiPembayran: String = "",
     val id_mayat: String = "",
     val di_wakilkan_oleh: String = "",
     val usia: String = "",

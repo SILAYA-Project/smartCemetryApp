@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.silcare.css.Component.textFieldCustom.TextFieldCustom
 import com.silcare.css.api.MakamViewModel
 
@@ -113,7 +114,7 @@ fun PageAddBlock(
 @Composable
 private fun PageAddBlockPrev() {
     PageAddBlock(
-        viewModel = MakamViewModel(),
+        viewModel = viewModel(),
         onDismiss = {}
     )
 }

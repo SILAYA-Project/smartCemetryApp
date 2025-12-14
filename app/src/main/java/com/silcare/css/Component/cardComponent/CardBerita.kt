@@ -60,14 +60,14 @@ fun CardBerita(
                     )
                 }
             )
-            Text(
-                text = "Selengkapnya",
-                color = Color(0xb30059ff),
-                modifier = Modifier
-                    .padding(bottom = 10.dp, end = 10.dp)
-                    .align(Alignment.BottomEnd)
-                    .clickable { onClick() }
-            )
+//            Text(
+//                text = "Selengkapnya",
+//                color = Color(0xb30059ff),
+//                modifier = Modifier
+//                    .padding(bottom = 10.dp, end = 10.dp)
+//                    .align(Alignment.BottomEnd)
+//                    .clickable { onClick() }
+//            )
         }
     )
     Spacer(modifier = Modifier.size(5.dp))

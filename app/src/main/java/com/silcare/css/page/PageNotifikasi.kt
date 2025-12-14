@@ -51,7 +51,7 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
     var isFilterMenuOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit,filter) {
-        viewModel.fetchDataNotifikasi()
+        viewModel.fetchDataNotifikasi(filter)
     }
 
     Column(
@@ -83,7 +83,7 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (filter == "az") {
+                                if (filter == "di tolak") {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "checked",
@@ -91,17 +91,17 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                 }
-                                Text("Nama A → Z")
+                                Text("di tolak")
                             }
                         },
                         onClick = {
-                            filter = "az"
+                            filter = "di tolak"
                             isFilterMenuOpen = false
                         }
                     )
                     DropdownMenuItem(text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (filter == "za") {
+                            if (filter == "di terima") {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "checked",
@@ -109,15 +109,15 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
-                            Text("Nama Z → A")
+                            Text("di terima")
                         }
                     }, onClick = {
-                        filter = "za"
+                        filter = "di terima"
                         isFilterMenuOpen = false
                     })
                     DropdownMenuItem(text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (filter == "max") {
+                            if (filter == "terbaru") {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "checked",
@@ -125,28 +125,28 @@ fun PageNotifikasi(viewModel: MakamViewModel = viewModel()) {
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
-                            Text("Terisi Paling Banyak")
+                            Text("terbaru")
                         }
                     }, onClick = {
-                        filter = "max"
+                        filter = "terbaru"
                         isFilterMenuOpen = false
                     })
-                    DropdownMenuItem(text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (filter == "min") {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = "checked",
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                            }
-                            Text("Terisi Paling Sedikit")
-                        }
-                    }, onClick = {
-                        filter = "min"
-                        isFilterMenuOpen = false
-                    })
+//                    DropdownMenuItem(text = {
+//                        Row(verticalAlignment = Alignment.CenterVertically) {
+//                            if (filter == "terlama") {
+//                                Icon(
+//                                    imageVector = Icons.Default.Check,
+//                                    contentDescription = "checked",
+//                                    modifier = Modifier.size(18.dp)
+//                                )
+//                                Spacer(modifier = Modifier.width(8.dp))
+//                            }
+//                            Text("terlama")
+//                        }
+//                    }, onClick = {
+//                        filter = "terlama"
+//                        isFilterMenuOpen = false
+//                    })
                 }
             }
 

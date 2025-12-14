@@ -148,7 +148,7 @@ class MainActivity : ComponentActivity() {
                                 exitTransition = { slideOutHorizontally { full -> -full * direction } }
                             ) {
                                 DatabasePage(
-                                    onProfile = { showProfile = true }
+                                    onProfile = { showProfile = true },
                                 )
                             }
                             composable(
@@ -165,7 +165,8 @@ class MainActivity : ComponentActivity() {
                                 NoMakamPage(
                                     blokId = id,
                                     viewModel = MakamViewModel(),
-                                    navController = navController
+                                    navController = navController,
+                                    onProfile = { showProfile = true }
                                 )
                             }
                         }
@@ -256,7 +257,8 @@ class MainActivity : ComponentActivity() {
                                 NoMakamPage(
                                     blokId = id,
                                     viewModel = MakamViewModel(),
-                                    navController = navController
+                                    navController = navController,
+                                    onProfile = { showProfile = true }
                                 )
                             }
                         }

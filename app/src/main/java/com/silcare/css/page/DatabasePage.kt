@@ -42,7 +42,6 @@ import com.silcare.css.Component.cardComponent.CardDataMayat
 import com.silcare.css.Component.cardComponent.CardDataMayatShimmer
 import com.silcare.css.Component.top_app_bar.TopSearchBarFillter
 import com.silcare.css.api.MakamViewModel
-import com.silcare.css.api.Mayat
 import com.silcare.css.api.UserPreferences
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -61,9 +60,10 @@ fun DatabasePage(
     var filter by remember { mutableStateOf("") }
     var isFilterMenuOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit,search,filter) {
+    LaunchedEffect(Unit, search, filter) {
         viewModel.fetchDataMayat(search, filter)
     }
+
     viewModel.getUserData(
         uid = uid,
         onSuccess = { userData ->
@@ -201,7 +201,9 @@ fun DatabasePage(
 @Preview(showBackground = true)
 @Composable
 private fun DatabasePagePrev() {
-    DatabasePage(
-        onProfile = {}
-    )
+//    DatabasePage(
+//        onProfile = {},
+//        viewModel = Mayat,
+//        onDetail = {}
+//    )
 }

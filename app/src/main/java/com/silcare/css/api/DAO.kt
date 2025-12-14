@@ -63,6 +63,47 @@ class MakamViewModel : ViewModel() {
     private val _isLoadingNotifikasi = MutableStateFlow(true)
     val isLoadingNotifikasi: StateFlow<Boolean> = _isLoadingNotifikasi
 
+    private val _isDeleting = MutableStateFlow(false)
+    val isDeleting = _isDeleting.asStateFlow()
+
+    fun deleteMayat(idMayat: String, onResult: (Boolean) -> Unit) {
+        _isDeleting.value = true
+
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("mayat")
+            .whereEqualTo("id_mayat", idMayat)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+
+                if (querySnapshot.isEmpty) {
+                    _isDeleting.value = false
+                    onResult(false)
+                    return@addOnSuccessListener
+                }
+
+                val batch = db.batch()
+                for (doc in querySnapshot.documents) {
+                    batch.delete(doc.reference)
+                }
+
+                batch.commit()
+                    .addOnSuccessListener {
+                        _isDeleting.value = false
+                        onResult(true)
+                    }
+                    .addOnFailureListener {
+                        _isDeleting.value = false
+                        onResult(false)
+                    }
+            }
+            .addOnFailureListener {
+                _isDeleting.value = false
+                onResult(false)
+            }
+    }
+
+
     fun getUserData(
         onSuccess: (UserData) -> Unit,
         onError: (String) -> Unit,
@@ -102,7 +143,7 @@ class MakamViewModel : ViewModel() {
         akses: String,
         foto: String?,
         onDone: () -> Unit,
-        onError:(String) -> Unit
+        onError: (String) -> Unit
     ) {
         val data = mutableMapOf<String, Any>(
             "nama" to nama,
@@ -124,8 +165,6 @@ class MakamViewModel : ViewModel() {
                 onError(err.message ?: "Terjadi kesalahan saat update profile")
             }
     }
-
-
 
 
     fun login(
@@ -338,13 +377,14 @@ class MakamViewModel : ViewModel() {
             }
     }
 
-    fun fetchDataNotifikasi() {
+    fun fetchDataNotifikasi(filter: String = "") {
         _isLoadingNotifikasi.value = true
+
         db.collection("admin notifikasi")
-            .orderBy("tanggal_pengajuan", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot != null) {
+
                     val list = snapshot.documents.mapNotNull { doc ->
                         val data = doc.data ?: return@mapNotNull null
 
@@ -368,11 +408,11 @@ class MakamViewModel : ViewModel() {
                             nomor_kk = data["nomor_kk"] as? String ?: "",
                             nomor_nik = data["nomor_nik"] as? String ?: "",
 
-                            tanggal_di_makamkan = (data["tanggal_di_makamkan"] as? Timestamp),
-                            tanggal_meninggal = (data["tanggal_meninggal"] as? Timestamp),
+                            tanggal_pengajuan = data["tanggal_pengajuan"] as? Timestamp,
+                            tanggal_di_makamkan = data["tanggal_di_makamkan"] as? Timestamp,
+                            tanggal_meninggal = data["tanggal_meninggal"] as? Timestamp,
 
-                            tempat_dan_tanggal_lahir = data["tempat_dan_tanggal_lahir"] as? String
-                                ?: "",
+                            tempat_dan_tanggal_lahir = data["tempat_dan_tanggal_lahir"] as? String ?: "",
                             jenis_kelamin = data["jenis_kelamin"] as? String ?: "",
                             nomor_telpon = data["nomor_telpon"] as? String ?: "",
                             wafat = data["wafat"] as? String ?: "",
@@ -397,9 +437,34 @@ class MakamViewModel : ViewModel() {
                             anak = data["anak"] as? String ?: "",
                         )
                     }
-                    val sortedList = list
-                        .sortedWith(compareBy<AdminNotifikasi> { it.statusNotifikasi }.thenByDescending { it.tanggal_pengajuan })
-                    _notifikasiList.value = sortedList
+
+                    var filtered = list
+
+                    when (filter) {
+
+                        "di tolak" -> {
+                            filtered = filtered.filter { it.status == false && it.statusNotifikasi == true }
+                        }
+
+                        "di terima" -> {
+                            filtered = filtered.filter { it.status == true && it.statusNotifikasi == true }
+                        }
+
+                        "terbaru" -> {
+                            filtered = filtered.sortedByDescending { it.tanggal_pengajuan }
+                        }
+//
+//                        "terlama" -> {
+//                            filtered = filtered.sortedBy { it.tanggal_pengajuan }
+//                        }
+                    }
+
+                    filtered = filtered.sortedWith(
+                        compareBy<AdminNotifikasi> { it.statusNotifikasi }
+                            .thenByDescending { it.tanggal_pengajuan }
+                    )
+
+                    _notifikasiList.value = filtered
                     _isLoadingNotifikasi.value = false
                 }
             }
@@ -485,20 +550,17 @@ class MakamViewModel : ViewModel() {
 
     fun fetchIdMakamByBlokOnce(
         idBlok: String,
+        search: String? = null,
+        filter: String? = null,
         onResult: (List<IdMakam>) -> Unit
     ) {
-        Log.d("FETCH_MAKAM", "Mulai fetch blok: $idBlok")
-
+        val keyword = search?.trim()?.lowercase()
         db.collection("blok makam")
             .document(idBlok)
             .collection("id makam")
             .get()
             .addOnSuccessListener { makamSnapshot ->
-                Log.d("FETCH_MAKAM", "Jumlah dokumen makam ditemukan: ${makamSnapshot.size()}")
-
                 val makamList = makamSnapshot.documents.map { doc ->
-                    Log.d("FETCH_MAKAM", "Doc makam ID=${doc.id}, code=${doc.getString("code_makam")}, status=${doc.getBoolean("status")}")
-
                     IdMakam(
                         id = doc.id,
                         code_makam = doc.getString("code_makam") ?: "",
@@ -507,7 +569,6 @@ class MakamViewModel : ViewModel() {
                 }
 
                 if (makamList.isEmpty()) {
-                    Log.w("FETCH_MAKAM", "List makam kosong")
                     onResult(emptyList())
                     return@addOnSuccessListener
                 }
@@ -516,48 +577,63 @@ class MakamViewModel : ViewModel() {
                     .get()
                     .addOnSuccessListener { blokDoc ->
                         val namaBlok = blokDoc.getString("nama_blok") ?: ""
-                        Log.d("FETCH_MAKAM", "Nama blok ditemukan: $namaBlok")
-
                         val makamCodes = makamList.map { it.code_makam }.filter { it.isNotEmpty() }
-                        Log.d("FETCH_MAKAM", "Kode makam: $makamCodes")
 
                         if (makamCodes.isEmpty()) {
-                            Log.w("FETCH_MAKAM", "Semua code_makam kosong!")
                             onResult(makamList.map { it.copy(nama_blok = namaBlok) })
                             return@addOnSuccessListener
                         }
 
-                        if (makamCodes.size > 10) {
-                            Log.e("FETCH_MAKAM", "ERROR! whereIn melebihi limit 10: jumlah = ${makamCodes.size}")
-                        }
+                        val finalResults = mutableListOf<IdMakam>()
+                        val chunks = makamCodes.chunked(10)
+                        var completedChunks = 0
 
-                        db.collection("mayat")
-                            .whereIn("id_makam", makamCodes.take(10))
-                            .get()
-                            .addOnSuccessListener { mayatSnapshot ->
-                                Log.d("FETCH_MAYAT", "Jumlah mayat ditemukan: ${mayatSnapshot.size()}")
+                        chunks.forEach { chunk ->
+                            db.collection("mayat")
+                                .whereIn("id_makam", chunk)
+                                .get()
+                                .addOnSuccessListener { mayatSnapshot ->
+                                    val mayatMap = mayatSnapshot.documents.associate { doc ->
+                                        val idMakam = doc.getString("id_makam") ?: ""
+                                        val namaMayat = doc.getString("nama_mayat") ?: ""
+                                        idMakam to namaMayat
+                                    }
 
-                                val mayatMap = mayatSnapshot.documents.associate { doc ->
-                                    val idMakam = doc.get("id_makam")?.toString() ?: ""
-                                    val namaMayat = doc.getString("nama_mayat") ?: ""
-                                    Log.d("FETCH_MAYAT", "Mayat: id_makam=$idMakam, nama=$namaMayat")
-                                    idMakam to namaMayat
-                                }
+                                    makamList.forEach { makam ->
+                                        if (chunk.contains(makam.code_makam)) {
+                                            finalResults.add(
+                                                makam.copy(
+                                                    nama_blok = namaBlok,
+                                                    namaAlmarhum = mayatMap[makam.code_makam] ?: ""
+                                                )
+                                            )
+                                        }
+                                    }
 
-                                val finalList = makamList.map { makam ->
-                                    makam.copy(
-                                        nama_blok = namaBlok,
-                                        namaAlmarhum = mayatMap[makam.code_makam] ?: ""
-                                    ).also {
-                                        Log.d("FETCH_RESULT", "Final: ${it.code_makam} - ${it.namaAlmarhum}")
+                                    completedChunks++
+                                    if (completedChunks == chunks.size) {
+                                        var filteredList = if (!keyword.isNullOrEmpty()) {
+                                            finalResults.filter {
+                                                it.namaAlmarhum.lowercase().contains(keyword) ||
+                                                        it.code_makam.lowercase().contains(keyword)
+                                            }
+                                        } else finalResults
+
+                                        filteredList = when (filter) {
+                                            "az" -> filteredList.sortedBy { it.namaAlmarhum.lowercase() }
+                                            "za" -> filteredList.sortedByDescending { it.namaAlmarhum.lowercase() }
+                                            "terisi" -> filteredList.filter { it.namaAlmarhum.isNotEmpty() }
+                                            "tersedia" -> filteredList.filter { it.namaAlmarhum.isEmpty() }
+                                            else -> filteredList
+                                        }
+
+                                        onResult(filteredList)
                                     }
                                 }
-
-                                onResult(finalList)
-                            }
-                            .addOnFailureListener { error ->
-                                Log.e("FETCH_MAYAT", "Gagal fetch mayat: ${error.message}")
-                            }
+                                .addOnFailureListener { error ->
+                                    Log.e("FETCH_MAYAT", "Gagal fetch mayat: ${error.message}")
+                                }
+                        }
                     }
                     .addOnFailureListener { error ->
                         Log.e("FETCH_BLOK", "Gagal fetch blok: ${error.message}")
@@ -569,11 +645,12 @@ class MakamViewModel : ViewModel() {
     }
 
 
+
     fun fetchDataMayat(searchName: String? = null, filter: String? = null) {
         val keyword = searchName?.trim()?.lowercase()
         _isLoading.value = true
         db.collection("mayat")
-            .orderBy("tanggal_di_makamkan",Query.Direction.DESCENDING)
+            .orderBy("tanggal_di_makamkan", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot != null) {
