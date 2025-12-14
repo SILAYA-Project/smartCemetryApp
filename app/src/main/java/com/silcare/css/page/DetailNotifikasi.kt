@@ -1,6 +1,7 @@
 package com.silcare.css.page
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -111,6 +112,7 @@ fun DetailNotifikasi(data: AdminNotifikasi, modifier: Modifier = Modifier) {
             ImagePreview("KTP Almarhum ", data.urlFotoKtp)
             ImagePreview("KK ", data.urlFotoKk)
             ImagePreview("Surat Kematian ", data.urlSuratKematian)
+            ImagePreview("Bukti Pembayaran ", data.urlBuktiPembayran)
         }
 
         DetailSection(title = "Waktu Proses") {

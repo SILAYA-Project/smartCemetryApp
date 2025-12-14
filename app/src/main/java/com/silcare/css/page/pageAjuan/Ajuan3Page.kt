@@ -32,7 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,8 +68,11 @@ fun Ajuan3Page(
     val dataList = AjuanDataStore.listData
     var ktpAhliWarisUri by remember { mutableStateOf<Uri?>(null) }
     var ktpAlmarhumUri by remember { mutableStateOf<Uri?>(null) }
+    var kkUri by remember { mutableStateOf<Uri?>(null) }
     var skkUri by remember { mutableStateOf<Uri?>(null) }
+    var buktiPembayranUri by remember { mutableStateOf<Uri?>(null) }
     var metoPem by remember { mutableStateOf("") }
+    val clipboardManager = LocalClipboardManager.current
 
     LaunchedEffect(Unit) {
         println("Total data tersimpan: ${dataList.size}")
@@ -110,12 +115,21 @@ fun Ajuan3Page(
                 )
             }
             Spacer(modifier = Modifier.padding(20.dp))
-            CardAddImage(
-                title = "SKK",
-                desc = "Surat Keterangan Kematian",
-                width = 150,
-                onImageSelected = { uri -> skkUri = uri }
-            )
+            Row {
+                CardAddImage(
+                    title = "KK",
+                    desc = "Masukan Kartu Keluarga",
+                    onImageSelected = { uri -> kkUri = uri }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                CardAddImage(
+                    title = "SKK",
+                    desc = "Masukan Surat Kematian",
+                    onImageSelected = { uri -> skkUri = uri }
+                )
+
+            }
             Spacer(modifier = Modifier.padding(20.dp))
             TextFieldDropDown(
                 title = "Block Makam",
@@ -126,9 +140,9 @@ fun Ajuan3Page(
                     val blokId = blokList.firstOrNull { it.nama_blok == namaBlok }?.id
                     if (blokId != null) {
                         viewModel.fetchIdMakamByBlok(blokId)
-                        Log.e( "Ajuan3Page 1 : ", blokId)
+                        Log.e("Ajuan3Page 1 : ", blokId)
                     }
-                    Log.e( "Ajuan3Page 2 : ", blokId!!.toString())
+                    Log.e("Ajuan3Page 2 : ", blokId!!.toString())
                 },
                 pilihan = blokList.map { it.nama_blok }
             )
@@ -148,9 +162,51 @@ fun Ajuan3Page(
                 modifier = Modifier.fillMaxWidth(),
                 pilihan = listOf("Transfer Bank", "Tunai"),
                 value = metoPem,
-                onValueChange = {metoPem = it}
+                onValueChange = { metoPem = it }
             )
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            if (metoPem == "Transfer Bank") {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = {
+                        Text(text = "Silahkan Melakukan Pembayaran: ")
+                        Spacer(modifier = Modifier.padding(10.dp))
+
+                        Text(text = "brksyariah", fontWeight = FontWeight.Bold)
+//                        Text(text = "106-20-02136 ", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                        Text(
+                            text = "106-20-02136",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.clickable {
+                                clipboardManager.setText(AnnotatedString("106-20-02136"))
+                            }
+                        )
+                        Text(text = "YAYASAN NURUL KHAIR MADANI", fontWeight = FontWeight.Bold)
+
+                        Spacer(modifier = Modifier.padding(10.dp))
+
+                        Text(text = "Masukan Bukti Pembayaran anda :")
+
+                        Spacer(modifier = Modifier.padding(10.dp))
+
+                        CardAddImage(
+                            width = 150,
+                            title = "Bukti Pembayaran",
+                            desc = "Masukan bukti di sini",
+                            onImageSelected = { uri -> buktiPembayranUri = uri }
+                        )
+                    }
+                )
+            } else if (metoPem == "Tunai") {
+                Text(text = "Silahkan Ke menuju ke Admin")
+            }
+
             Spacer(modifier = Modifier.padding(20.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -192,6 +248,14 @@ fun Ajuan3Page(
                                         uploadRepository.uploadToCloudinary(context, it)
                                     }
 
+                                    val urlBuktiPembayran = buktiPembayranUri?.let {
+                                        uploadRepository.uploadToCloudinary(context, it)
+                                    }
+
+                                    val urlFotoKk = kkUri?.let {
+                                        uploadRepository.uploadToCloudinary(context, it)
+                                    }
+
                                     var data = navController.previousBackStackEntry
                                         ?.savedStateHandle
                                         ?.get<AdminNotifikasi>("adminData")
@@ -206,7 +270,9 @@ fun Ajuan3Page(
                                         tanggal_pengajuan = Timestamp.now(),
                                         urlFotoKtpPerwakilan = urlKtpAhliWaris ?: "",
                                         urlFotoKtp = urlKtpAlmarhum ?: "",
-                                        urlSuratKematian = urlSuratKematian ?: ""
+                                        urlSuratKematian = urlSuratKematian ?: "",
+                                        urlBuktiPembayran = urlBuktiPembayran ?: "",
+                                        urlFotoKk = urlFotoKk ?: ""
                                     ) ?: AdminNotifikasi()
 
                                     AjuanDataStore.updateLastData { newData }

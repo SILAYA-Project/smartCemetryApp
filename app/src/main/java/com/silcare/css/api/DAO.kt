@@ -71,7 +71,6 @@ class MakamViewModel : ViewModel() {
 
         val db = FirebaseFirestore.getInstance()
 
-        // Cari dokumen yang punya field id_mayat == idMayat
         db.collection("mayat")
             .whereEqualTo("id_mayat", idMayat)
             .get()
@@ -83,7 +82,6 @@ class MakamViewModel : ViewModel() {
                     return@addOnSuccessListener
                 }
 
-                // Hapus semua dokumen yang cocok
                 val batch = db.batch()
                 for (doc in querySnapshot.documents) {
                     batch.delete(doc.reference)
@@ -462,7 +460,7 @@ class MakamViewModel : ViewModel() {
                     }
 
                     filtered = filtered.sortedWith(
-                        compareBy<AdminNotifikasi> { it.statusNotifikasi } // false duluan
+                        compareBy<AdminNotifikasi> { it.statusNotifikasi }
                             .thenByDescending { it.tanggal_pengajuan }
                     )
 
@@ -474,82 +472,6 @@ class MakamViewModel : ViewModel() {
                 _isLoadingNotifikasi.value = false
             }
     }
-
-
-
-
-
-
-
-//    fun fetchDataNotifikasi() {
-//        _isLoadingNotifikasi.value = true
-//        db.collection("admin notifikasi")
-//            .orderBy("tanggal_pengajuan", Query.Direction.DESCENDING)
-//            .get()
-//            .addOnSuccessListener { snapshot ->
-//                if (snapshot != null) {
-//                    val list = snapshot.documents.mapNotNull { doc ->
-//                        val data = doc.data ?: return@mapNotNull null
-//
-//                        AdminNotifikasi(
-//                            status = data["status"] as? Boolean ?: false,
-//                            inputData = data["inputData"] as? Boolean ?: false,
-//                            fotoKtpPerwakilan = data["fotoKtpPerwakilan"] as? Boolean ?: false,
-//                            fotoKtp = data["fotoKtp"] as? Boolean ?: false,
-//                            fotoKk = data["fotoKk"] as? Boolean ?: false,
-//                            suratKematian = data["suratKematian"] as? Boolean ?: false,
-//                            statusNotifikasi = data["statusNotifikasi"] as? Boolean ?: false,
-//
-//                            id_mayat = data["id_mayat"] as? String ?: "",
-//                            di_wakilkan_oleh = data["di_wakilkan_oleh"] as? String ?: "",
-//                            usia = data["usia"] as? String ?: "",
-//                            nama_mayat = data["nama_mayat"] as? String ?: "",
-//                            blok_makam = data["blok_makam"] as? String ?: "",
-//                            id_makam = data["id_makam"] as? String ?: "",
-//                            meninggal_di = data["meninggal_di"] as? String ?: "",
-//                            skm = data["skm"] as? String ?: "",
-//                            nomor_kk = data["nomor_kk"] as? String ?: "",
-//                            nomor_nik = data["nomor_nik"] as? String ?: "",
-//
-//                            tanggal_di_makamkan = (data["tanggal_di_makamkan"] as? Timestamp),
-//                            tanggal_meninggal = (data["tanggal_meninggal"] as? Timestamp),
-//
-//                            tempat_dan_tanggal_lahir = data["tempat_dan_tanggal_lahir"] as? String
-//                                ?: "",
-//                            jenis_kelamin = data["jenis_kelamin"] as? String ?: "",
-//                            nomor_telpon = data["nomor_telpon"] as? String ?: "",
-//                            wafat = data["wafat"] as? String ?: "",
-//                            sebab = data["sebab"] as? String ?: "",
-//                            alamatm = data["alamatm"] as? String ?: "",
-//                            alamatw = data["alamatw"] as? String ?: "",
-//                            email = data["email"] as? String ?: "",
-//                            rtm = data["rtm"] as? String ?: "",
-//                            rwm = data["rwm"] as? String ?: "",
-//                            rtw = data["rtw"] as? String ?: "",
-//                            rww = data["rww"] as? String ?: "",
-//                            kelurahanm = data["kelurahanm"] as? String ?: "",
-//                            kecamatanm = data["kecamatanm"] as? String ?: "",
-//                            kelurahanw = data["kelurahanw"] as? String ?: "",
-//                            kecamatanw = data["kecamatanw"] as? String ?: "",
-//                            hubungan = data["hubungan"] as? String ?: "",
-//                            agama = data["agama"] as? String ?: "",
-//                            kewarganegaraan = data["kewarganegaraan"] as? String ?: "",
-//                            nama_bapak = data["nama_bapak"] as? String ?: "",
-//                            nama_ibu = data["nama_ibu"] as? String ?: "",
-//                            suami_atau_istri = data["suami_atau_istri"] as? String ?: "",
-//                            anak = data["anak"] as? String ?: "",
-//                        )
-//                    }
-//                    val sortedList = list
-//                        .sortedWith(compareBy<AdminNotifikasi> { it.statusNotifikasi }.thenByDescending { it.tanggal_pengajuan })
-//                    _notifikasiList.value = sortedList
-//                    _isLoadingNotifikasi.value = false
-//                }
-//            }
-//            .addOnFailureListener {
-//                _isLoadingNotifikasi.value = false
-//            }
-//    }
 
     fun tolakNotifikasi(notifikasi: AdminNotifikasi, onResult: (Boolean) -> Unit) {
         db.collection("admin notifikasi")
@@ -626,77 +548,6 @@ class MakamViewModel : ViewModel() {
         Log.e("fetchIdMakamByBlok 3: ", _idMakamList.value.toString())
     }
 
-//    fun fetchIdMakamByBlokOnce(
-//        idBlok: String,
-//        search: String,
-//        filter: String? = null,
-//        onResult: (List<IdMakam>) -> Unit
-//    ) {
-//        Log.d("FETCH_MAKAM", "Mulai fetch blok: $idBlok")
-//        db.collection("blok makam")
-//            .document(idBlok)
-//            .collection("id makam")
-//            .get()
-//            .addOnSuccessListener { makamSnapshot ->
-//                val makamList = makamSnapshot.documents.map { doc ->
-//                    IdMakam(
-//                        id = doc.id,
-//                        code_makam = doc.getString("code_makam") ?: "",
-//                        status = doc.getBoolean("status") ?: false
-//                    )
-//                }
-//
-//                if (makamList.isEmpty()) {
-//                    onResult(emptyList())
-//                    return@addOnSuccessListener
-//                }
-//
-//                db.collection("blok makam").document(idBlok)
-//                    .get()
-//                    .addOnSuccessListener { blokDoc ->
-//                        val namaBlok = blokDoc.getString("nama_blok") ?: ""
-//                        val makamCodes = makamList.map { it.code_makam }.filter { it.isNotEmpty() }
-//
-//                        db.collection("mayat")
-//                            .whereIn("id_makam", makamCodes.take(10))
-//                            .get()
-//                            .addOnSuccessListener { mayatSnapshot ->
-//                                val mayatMap = mayatSnapshot.documents.associate { doc ->
-//                                    val idMakam = doc.get("id_makam")?.toString() ?: ""
-//                                    val namaMayat = doc.getString("nama_mayat") ?: ""
-//                                    idMakam to namaMayat
-//                                }
-//
-//                                var finalList = makamList.map { makam ->
-//                                    makam.copy(
-//                                        nama_blok = namaBlok,
-//                                        namaAlmarhum = mayatMap[makam.code_makam] ?: ""
-//                                    )
-//                                }
-//
-//                                finalList = when (filter) {
-//                                    "az" -> finalList.sortedBy { it.namaAlmarhum.lowercase() }
-//                                    "za" -> finalList.sortedByDescending { it.namaAlmarhum.lowercase() }
-//                                    "max" -> finalList.sortedByDescending { if (it.status) 1 else 0 }
-//                                    "min" -> finalList.sortedBy { if (it.status) 1 else 0 }
-//                                    else -> finalList
-//                                }
-//
-//                                onResult(finalList)
-//                            }
-//                            .addOnFailureListener { error ->
-//                                Log.e("FETCH_MAYAT", "Gagal fetch mayat: ${error.message}")
-//                            }
-//                    }
-//                    .addOnFailureListener { error ->
-//                        Log.e("FETCH_BLOK", "Gagal fetch blok: ${error.message}")
-//                    }
-//            }
-//            .addOnFailureListener { error ->
-//                Log.e("FETCH_MAKAM", "Gagal fetch id makam: ${error.message}")
-//            }
-//    }
-
     fun fetchIdMakamByBlokOnce(
         idBlok: String,
         search: String? = null,
@@ -761,7 +612,6 @@ class MakamViewModel : ViewModel() {
 
                                     completedChunks++
                                     if (completedChunks == chunks.size) {
-                                        // Apply search
                                         var filteredList = if (!keyword.isNullOrEmpty()) {
                                             finalResults.filter {
                                                 it.namaAlmarhum.lowercase().contains(keyword) ||
@@ -769,7 +619,6 @@ class MakamViewModel : ViewModel() {
                                             }
                                         } else finalResults
 
-                                        // Apply filter
                                         filteredList = when (filter) {
                                             "az" -> filteredList.sortedBy { it.namaAlmarhum.lowercase() }
                                             "za" -> filteredList.sortedByDescending { it.namaAlmarhum.lowercase() }
